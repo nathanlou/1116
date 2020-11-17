@@ -42,7 +42,7 @@ export function equipment_del(data) {
   return request({
     url: '/sbgl/deviceInfor_delete',
     method: 'post',
-	params:data
+    params:data
   })
 }
 
