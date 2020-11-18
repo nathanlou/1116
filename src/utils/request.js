@@ -48,7 +48,7 @@ service.interceptors.response.use(
     const res = response.data
 		// console.log(res)
 		// setToken(res.data.token)
-		setToken(res.data.token)
+		// setToken(res.data.token)
     // if the custom status is not 20000, it is judged as an error.
     if (res.status !== 200) {
       Message({

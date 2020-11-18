@@ -80,15 +80,15 @@
         :total="total"
         @current-change="handleCurrentChange"
       />
-      <!-- <el-pagination class="fy" layout="total,prev, pager, next" :page-sizes="[20, 50, 100, 200]" :total="total"
-			 background @current-change="current_change" /> -->
     </div>
   </div>
 </template>
 
 <script>
-import { equipment_list, equipment_del } from '@/api/getlist'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {
+  equipment_list /* equipment_del */
+} from '@/api/getlist'
+  // import { getToken, setToken, removeToken } from '@/utils/auth'
 export default {
   data() {
     return {
@@ -132,13 +132,13 @@ export default {
       status_value: '',
       qhkeyword: '',
       start: 0,
-				 query: {
-				 	access_token: localStorage.getItem('accessToken'),
-				 	start: this.start,
-				 	length: 20,
-				 	qCompanyId: '',
-				 	qkeyword: this.qhkeyword
-				 }
+      query: {
+        access_token: localStorage.getItem('accessToken'),
+        start: this.start,
+        length: 20,
+        qCompanyId: '',
+        qkeyword: this.qhkeyword
+      }
     }
   },
   created: function() {
@@ -173,19 +173,18 @@ export default {
       })
     },
     monitor(index, row) {
-      var id = row.id
       this.$router.push({
         path: 'monitor',
         query: {
-          key: id
+          rowData: row
         }
       })
     },
-			      handleCurrentChange(val) {
-					  var that = this
-					 that.query.start = (val - 1) * 20
-					 this.getlist(that.start)
-			      },
+    handleCurrentChange(val) {
+      var that = this
+      that.query.start = (val - 1) * 20
+      this.getlist(that.start)
+    },
     current_change: function(currentPage) {
       this.currentPage = currentPage
     },
@@ -196,7 +195,7 @@ export default {
       this.selectionDatas = []
       var arr = []
       var data = this.$refs.multipleTable.selection
-      if (data.length == 0) {
+      if (data.length === 0) {
         this.$alert('您没有任何选择', '提示', {
           confirmButtonText: '确定',
           callback: action => {}
@@ -237,67 +236,67 @@ export default {
 </script>
 
 <style scoped="scoped">
-	.screen {
-		font-size: 0.875rem;
-		color: gray;
-	}
+  .screen {
+    font-size: 0.875rem;
+    color: gray;
+  }
 
-	.select {
-		width: 10rem;
-		margin-right: 1rem;
-	}
+  .select {
+    width: 10rem;
+    margin-right: 1rem;
+  }
 
-	.fy {
-		text-align: right;
-		margin-top: 0.625rem;
-	}
+  .fy {
+    text-align: right;
+    margin-top: 0.625rem;
+  }
 
-	.titles {
-		width: 95%;
-		margin-left: 1rem;
+  .titles {
+    width: 95%;
+    margin-left: 1rem;
 
-		height: 100%;
-		margin-bottom: 1.25rem;
-		font-size: 0.875rem;
-	}
+    height: 100%;
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+  }
 
-	.btn {
-		margin-left: 0.5rem;
-		margin-bottom: 0.625rem;
+  .btn {
+    margin-left: 0.5rem;
+    margin-bottom: 0.625rem;
 
-	}
+  }
 
-	.btn_do {
-		margin-top: 0.625rem;
+  .btn_do {
+    margin-top: 0.625rem;
 
-	}
+  }
 
-	.container_table {
-		clear: both;
-	}
+  .container_table {
+    clear: both;
+  }
 
-	.table_headr {
-		height: 2rem;
-		line-height: 2rem;
-		color: white;
-		background-color: #409EFF;
+  .table_headr {
+    height: 2rem;
+    line-height: 2rem;
+    color: white;
+    background-color: #409EFF;
 
-	}
+  }
 
-	@media screen and (max-width: 1024px) {
-		.titles {
-			font-size: 0.875rem;
-			margin-top: -2.5%;
-		}
+  @media screen and (max-width: 1024px) {
+    .titles {
+      font-size: 0.875rem;
+      margin-top: -2.5%;
+    }
 
-		.select {
-			width: 6.7rem;
+    .select {
+      width: 6.7rem;
 
-			margin-right: 1rem;
-		}
+      margin-right: 1rem;
+    }
 
-		.btn {
-			margin-top: 0.625rem;
-		}
-	}
+    .btn {
+      margin-top: 0.625rem;
+    }
+  }
 </style>
