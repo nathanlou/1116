@@ -1,36 +1,41 @@
 <template>
-	<div :class="{'show':show}" class="header-search">
-		<el-badge :value="value" class="item">
-		</el-badge>	
-		 <svg-icon class-name="search-icon" icon-class="tips" @click.stop="click" />
-	</div>
+  <div :class="{'show':show}" class="header-search">
+    <el-badge :value="value" class="item" />
+    <svg-icon class-name="search-icon" icon-class="tips" @click.stop="click" />
+  </div>
 </template>
 
 <script>
-	// fuse is a lightweight fuzzy-search module
-	// make search results more in line with expectations
-	import Fuse from 'fuse.js'
-	import path from 'path'
-	import i18n from '@/lang'
+// fuse is a lightweight fuzzy-search module
+// make search results more in line with expectations
+// import Fuse from 'fuse.js'
+// import path from 'path'
+// import i18n from '@/lang'
 
-	export default {
-		name: 'HeaderSearch',
-		data() {
-			return {
-				value:0
-			}
-		},
-		computed: {
-		},
-		mounted() {
-			
-		},
-		methods: {
-			click(){
-				this.$router.push({path:'/notice'})
-			}
-		}
-	}
+export default {
+  name: 'HeaderSearch',
+  // components: {
+  //   Fuse,
+  //   path,
+  //   i18n
+  // },
+  data() {
+    return {
+      value: 0,
+      show: true
+    }
+  },
+  computed: {
+  },
+  mounted() {
+
+  },
+  methods: {
+    click() {
+      this.$router.push({ path: '/notice' })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
