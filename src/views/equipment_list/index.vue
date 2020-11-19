@@ -1,18 +1,15 @@
 <template>
   <div class="titles">
     <div class="screen">
-      企业：<el-select v-model="company_value" placeholder="请选择" class="select" size="mini" width="10%">
-        <el-option v-for="item in company_list" :key="item.value" :label="item.label" :value="item.value" />
+      企业：<el-select v-model="query.qCompanyId" placeholder="请选择" class="select" size="mini" width="10%">
+        <el-option v-for="item in company_list" :key="item.value" :label="item.companyName" :value="item.id" />
       </el-select>
       关键字：
-      <el-input v-model="qhkeyword" placeholder="编号/内部编号" class="select" size="mini" />
-      类型：<el-select v-model="style_value" placeholder="请选择" class="select" size="mini">
-        <el-option v-for="item in style_list" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      状态：<el-select v-model="status_value" placeholder="请选择" class="select" size="mini">
+      <el-input v-model="query.qkeyword" placeholder="编号/内部编号/sim" class="select" size="mini" />
+      状态：<el-select v-model="query.qState" placeholder="请选择" class="select" size="mini">
         <el-option v-for="item in status_list" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round="" @click="btnsearch">搜索</el-button>
+      <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round="" @click="getlist">搜索</el-button>
       <span style="float: right;">
         <router-link to="/equipment_add/index">
           <el-button class="btn" type="success" icon="el-icon-edit" size="mini" round>添加设备</el-button>
@@ -85,10 +82,8 @@
 </template>
 
 <script>
-import {
-  equipment_list /* equipment_del */
-} from '@/api/getlist'
-  // import { getToken, setToken, removeToken } from '@/utils/auth'
+import { equipment_list /* equipment_del */, company_listData } from '@/api/getlist'
+// import { getToken, setToken, removeToken } from '@/utils/auth'
 export default {
   data() {
     return {
@@ -97,53 +92,41 @@ export default {
       currentPage: 1, // 默认开始页面
       istag: true,
       tableData: [],
-      company_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: '潜合测试'
-      }, {
-        value: '选项2',
-        label: '客户体验'
-      }],
-      style_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: 'YLY1'
-      }, {
-        value: '选项2',
-        label: '智能除尘'
-      }],
+      company_list: [],
       status_list: [{
-        value: '选项0',
+        value: '',
         label: '全部'
       }, {
-        value: '选项1',
+        value: 'online',
         label: '在线'
       }, {
-        value: '选项2',
+        value: 'offline',
         label: '离线'
       }],
-      company_value: '',
-      style_value: '',
-      status_value: '',
-      qhkeyword: '',
       start: 0,
       query: {
         access_token: localStorage.getItem('accessToken'),
         start: this.start,
         length: 20,
         qCompanyId: '',
-        qkeyword: this.qhkeyword
+        qkeyword: '',
+        qState: '',
+        qVersion: '',
+        orderColumn: ''
       }
     }
   },
   created: function() {
     this.getlist()
     this.handleCurrentChange()
+    var query = {
+      access_token: localStorage.getItem('accessToken'),
+      start: 0,
+      length: '2000'
+    }
+    company_listData(query).then(res => {
+      this.company_list = res.data
+    })
   },
   methods: {
     getlist() {
@@ -152,16 +135,6 @@ export default {
         this.tableData = res.data
         this.total = res.recordsTotal
       })
-    },
-    btnsearch() {
-      const that = this
-      that.query = {
-        access_token: localStorage.getItem('accessToken'),
-        start: 0,
-        length: '',
-        qCompanyId: '',
-        qkeyword: that.qhkeyword
-      }
     },
     set_up(index, row) {
       localStorage.setItem('id', row.id)
