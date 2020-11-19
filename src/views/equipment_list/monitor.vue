@@ -91,6 +91,7 @@
                   <div class="label">{{ item.csmc }}</div>
                   <div style="margin-left: 0.9375rem;display: flex;">
                     <div v-if="!deviceDataVals[item.jcqdz] || deviceDataVals[item.jcqdz].length == 0">-</div>
+                    <div v-else-if="item.cd == 1">{{ deviceDataVals[item.jcqdz] }}</div>
                     <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv">{{ itemv?itemv:'-' }}<span
                       v-if="indexv < deviceDataVals[item.jcqdz].length-1"
                     >-</span></div>
@@ -189,165 +190,54 @@
           </el-tab-pane>
           <el-tab-pane label="参数信息">
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-              <el-tab-pane label="星期一" name="first">
-                <div class="msg_con">
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">汽包压力</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">压差</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">脉冲宽度</div>
-                      <div style="margin-left: 0.9375rem;">25</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">脉冲间隔</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
+              <el-tab-pane
+                v-for="(week,indexWeek) in xwzDeviceDataList"
+                :key="indexWeek"
+                :label="numberToWeek(indexWeek+1)"
+                :name="numberToWeek(indexWeek+1)"
+              >
+                <div style="display: flex;flex-wrap: wrap; line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
+                  <div v-for="(item,index) in week[numberToWeek(indexWeek+1)]" :key="index" style="display: flex;width: 50%;">
+                    <!-- <div class="label">{{ keyMapDetail[item.jcqdz]?keyMapDetail[item.jcqdz]:'未定义的参数' }}</div>
+                    <div style="margin-left: 0.9375rem;">30</div> -->
+                    <div class="label-xwz">{{ item.csmc }}</div>
+                    <div style="margin-left: 0.9375rem;display: flex;">
+                      <div v-if="!deviceDataVals[item.jcqdz] || deviceDataVals[item.jcqdz].length == 0">-</div>
+                      <div v-else-if="item.cd == 1">{{ deviceDataVals[item.jcqdz] }}</div>
+                      <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv">{{ itemv?itemv:'-' }}<span
+                        v-if="indexv < deviceDataVals[item.jcqdz].length-1"
+                      >-</span></div>
                     </div>
                   </div>
-
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">脉冲阀数</div>
-                      <div style="margin-left: 0.9375rem;">25</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">卸灰时长</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">卸灰间隔</div>
-                      <div style="margin-left: 0.9375rem;">25</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">提脉间隔</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-
-                </div>
-              </el-tab-pane>
-              <el-tab-pane label="星期二" name="second">
-                <div class="msg_con">
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">汽包压力</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">压差</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">脉冲宽度</div>
-                      <div style="margin-left: 0.9375rem;">25</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">脉冲间隔</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">脉冲阀数</div>
-                      <div style="margin-left: 0.9375rem;">25</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">卸灰时长</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-
-                  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">卸灰间隔</div>
-                      <div style="margin-left: 0.9375rem;">25</div>
-                    </div>
-                    <div style="display: flex;width: 50%;">
-                      <div class="label">提脉间隔</div>
-                      <div style="margin-left: 0.9375rem;">30</div>
-                    </div>
-                  </div>
-
                 </div>
               </el-tab-pane>
             </el-tabs>
-
           </el-tab-pane>
-          <el-tab-pane label="参数设置">
-            <div class="msg_con">
-              <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                <div style="display: flex;width: 50%;">
-                  <div class="label">汽包压力</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
+          <el-tab-pane label="参数信息">
+            <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+              <el-tab-pane
+                v-for="(week,indexWeek) in xwzDeviceDataList"
+                :key="indexWeek"
+                :label="numberToWeek(indexWeek+1)"
+                :name="numberToWeek(indexWeek+1)"
+              >
+                <div style="display: flex;flex-wrap: wrap; line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
+                  <div v-for="(item,index) in week[numberToWeek(indexWeek+1)]" :key="index" style="display: flex;width: 50%;">
+                    <!-- <div class="label">{{ keyMapDetail[item.jcqdz]?keyMapDetail[item.jcqdz]:'未定义的参数' }}</div>
+                    <div style="margin-left: 0.9375rem;">30</div> -->
+                    <div class="label-xwz">{{ item.csmc+' '+item.cd }}</div>
+                    <div style="margin-left: 0.9375rem;display: flex;">
+                      <div v-if="item.cd <= 1">
+                        <el-input v-model="deviceDataVals[item.jcqdz]" size="small" class="inputW" @blur="resetValue(item)" />
+                      </div>
+                      <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv" :style="'padding-right:20px;width:'+(64/deviceDataVals[item.jcqdz].length)+'%;'">
+                        <el-input v-model="deviceDataVals[item.jcqdz][indexv]" size="small" @blur="resetValue(item)" />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div style="display: flex;width: 50%;">
-                  <div class="label">压差</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-              </div>
-              <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                <div style="display: flex;width: 50%;">
-                  <div class="label">脉冲宽度</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-                <div style="display: flex;width: 50%;">
-                  <div class="label">脉冲间隔</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-              </div>
-
-              <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                <div style="display: flex;width: 50%;">
-                  <div class="label">脉冲阀数</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-                <div style="display: flex;width: 50%;">
-                  <div class="label">卸灰时长</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-              </div>
-
-              <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
-                <div style="display: flex;width: 50%;">
-                  <div class="label">卸灰间隔</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-                <div style="display: flex;width: 50%;">
-                  <div class="label">提脉间隔</div>
-                  <div style="margin-left: 0.9375rem;">
-                    <el-input placeholder="30" size="small" class="inputW" />
-                  </div>
-                </div>
-              </div>
-
-            </div>
+              </el-tab-pane>
+            </el-tabs>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -382,10 +272,11 @@ export default {
       deviceDataList: [],
       // 设备参数值列表 key:jcqid value:vals[]
       deviceDataVals: {},
-
+      // 小雾庄的处理
+      xwzDeviceDataList: [],
       idKey: '',
       typeKey: '', // 根据分类显示不同的菜单
-      activeName: 'first',
+      activeName: '星期一', // 默认显示的星期
       msg: '',
       id: ''
     }
@@ -412,6 +303,7 @@ export default {
     resetValue(item) {
       const data = this.deviceDataVals[item.jcqdz]
       const paramData = item.cd > 1 ? data.join(',') : data
+
       const param = {
         'address1': item.jcqdz,
         'length': item.cd,
@@ -431,6 +323,25 @@ export default {
         }
       })
     },
+    numberToWeek(num) {
+      if (num === 1) {
+        return '星期一'
+      } else if (num === 2) {
+        return '星期二'
+      } else if (num === 3) {
+        return '星期三'
+      } else if (num === 4) {
+        return '星期四'
+      } else if (num === 5) {
+        return '星期五'
+      } else if (num === 6) {
+        return '星期六'
+      } else if (num === 7) {
+        return '星期日'
+      } else {
+        return '错误'
+      }
+    },
     // 获取设备类型ID
     getTypeDetails() {
       const query = {
@@ -440,13 +351,37 @@ export default {
         'access_token': localStorage.getItem('accessToken')
       }
       getDetailsByDeviceTypeId(query).then(res => {
-        for (const i in res.data) {
-          res.data[i].jcqdz = res.data[i].jcqdz.toUpperCase()
-          if (res.data[i].cd > 1) {
-            this.$set(this.deviceDataVals, res.data[i].jcqdz, new Array(res.data[i].cd).fill(''))
+        // 不是小雾桩
+        if (this.rowData.sblxId !== 'modbus_xwz') {
+          for (const i in res.data) {
+            res.data[i].jcqdz = res.data[i].jcqdz.toUpperCase()
+            if (res.data[i].cd > 1) {
+              this.$set(this.deviceDataVals, res.data[i].jcqdz, new Array(res.data[i].cd).fill(''))
+            }
           }
+          this.deviceDataList = res.data
+          console.log(this.deviceDataList)
+        } else {
+          // 小雾桩单独处理
+
+          const dataArr = []
+          for (let i = 1; i <= 7; i++) {
+            const obj = {}
+            obj[this.numberToWeek(i)] = []
+            dataArr.push(obj)
+          }
+          for (const i in res.data) {
+            const item = res.data[i]
+            if (item.week > 0) {
+              item.jcqdz = item.jcqdz.toUpperCase()
+              if (item.cd > 1) {
+                this.$set(this.deviceDataVals, item.jcqdz, new Array(item.cd).fill(''))
+              }
+              dataArr[item.week - 1][this.numberToWeek(item.week)].push(item)
+            }
+          }
+          this.xwzDeviceDataList = dataArr
         }
-        this.deviceDataList = res.data
       })
     },
     doSelect() {
@@ -527,6 +462,13 @@ export default {
 <style scoped="scoped">
   .label {
     width: 6.875rem;
+    text-align: center;
+    background-color: #E8F4FF;
+    color: gray;
+  }
+
+  .label-xwz {
+    width: 11.875rem;
     text-align: center;
     background-color: #E8F4FF;
     color: gray;
