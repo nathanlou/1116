@@ -17,3 +17,13 @@ export function getDetailsByDeviceTypeId(data) {
     params:data
   })
 }
+
+//修改设备参数接口
+//access_token=ff711524-cb39-4417-aa54-67fc4df686d5&address1=D1005&length=2&data=1,2&deviceId=6a6857866d044b18004b
+export function deviceInforSetAddessVal(data) {
+  return request({
+    url: '/sbgl/deviceInfor_setAddessVal',
+    method: 'post',
+    params:data
+  })
+}

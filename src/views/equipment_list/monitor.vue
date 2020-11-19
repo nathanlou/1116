@@ -105,11 +105,11 @@
                 <div v-for="(item,index) in deviceDataList" :key="index" style="display: flex;width: 50%;">
                   <div class="label">{{ item.csmc }}</div>
                   <div style="padding-left: 0.9375rem;display: flex;width:calc(100% - 6rem)">
-                    <div v-if="!deviceDataVals[item.jcqdz] || deviceDataVals[item.jcqdz].length == 0">
-                      <el-input size="small" class="inputW" />
+                    <div v-if="item.cd <= 1">
+                      <el-input v-model="deviceDataVals[item.jcqdz]" size="small" class="inputW" @blur="resetValue(item)" />
                     </div>
                     <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv" :style="'padding-right:20px;width:'+(74/deviceDataVals[item.jcqdz].length)+'%;'">
-                      <el-input v-bind="deviceDataVals[item.jcqdz][indexv]" size="small" />
+                      <el-input v-model="deviceDataVals[item.jcqdz][indexv]" size="small" @blur="resetValue(item)" />
                     </div>
                   </div>
                 </div>
@@ -119,7 +119,7 @@
         </el-tabs>
       </div>
 
-      <!-- typeKey -->
+      <!-- 小雾桩单独处理 -->
       <div v-if="typeKey == 'modbus_xwz' " style="margin-left: 1.2rem;margin-top: 1rem;margin-right: 1rem;">
         <el-tabs type="border-card">
           <el-tab-pane label="基本信息">
@@ -127,61 +127,62 @@
               <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
                 <div style="display: flex;width: 50%;">
                   <div class="label">企业：</div>
-                  <div style="margin-left: 0.9375rem;">河南新乡鸿泰</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.companyName ? rowData.companyName :'-' }}</div>
                 </div>
                 <div style="display: flex;width: 50%;">
                   <div class="label">设备编号：</div>
-                  <div style="margin-left: 0.9375rem;">abF01312454</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.bh ? rowData.bh :'-' }}</div>
                 </div>
               </div>
               <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
                 <div style="display: flex;width: 50%;">
                   <div class="label">内部编号：</div>
-                  <div style="margin-left: 0.9375rem;">abacafdff</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.companyBh ? rowData.companyBh :'-' }}</div>
                 </div>
                 <div style="display: flex;width: 50%;">
                   <div class="label">SIM卡号：</div>
-                  <div style="margin-left: 0.9375rem;">SIM0.0.01 <span style="color: dodgerblue;"> 正常</span></div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.sim ? rowData.sim :'-' }} <span style="color: dodgerblue;">
+                    正常</span></div>
                 </div>
               </div>
               <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
                 <div style="display: flex;width: 50%;">
                   <div class="label">负责人：</div>
-                  <div style="margin-left: 0.9375rem;">周一</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.gdfzr ? rowData.gdfzr :'-' }}</div>
                 </div>
                 <div style="display: flex;width: 50%;">
                   <div class="label">联系电话：</div>
-                  <div style="margin-left: 0.9375rem;">13462268043</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.gdfzrsj ? rowData.gdfzrsj :'-' }}</div>
                 </div>
               </div>
               <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
                 <div style="display: flex;width: 50%;">
                   <div class="label">设备种类：</div>
-                  <div style="margin-left: 0.9375rem;">砂石分离机</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.sblx ? rowData.sblx :'-' }}</div>
                 </div>
                 <div style="display: flex;width: 50%;">
                   <div class="label">设备型号：</div>
-                  <div style="margin-left: 0.9375rem;">II型号</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.sbxh ? rowData.sbxh :'-' }}</div>
                 </div>
               </div>
               <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
                 <div style="display: flex;width: 50%;">
                   <div class="label">安装日期：</div>
-                  <div style="margin-left: 0.9375rem;">2020-05-22</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.azrq ? rowData.azrq :'-' }}</div>
                 </div>
                 <div style="display: flex;width: 50%;">
                   <div class="label">到期日期：</div>
-                  <div style="margin-left: 0.9375rem;">2021-05-22</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.yxrq ? rowData.yxrq :'-' }}</div>
                 </div>
               </div>
               <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
                 <div style="display: flex;width: 50%;">
                   <div class="label">当前地址：</div>
-                  <div style="margin-left: 0.9375rem;">河南省新乡市</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.dqdz ? rowData.dqdz :'-' }}</div>
                 </div>
                 <div style="display: flex;width: 50%;">
                   <div class="label">通讯时间：</div>
-                  <div style="margin-left: 0.9375rem;">2020-06-22</div>
+                  <div style="margin-left: 0.9375rem;">{{ rowData.companyName ? rowData.companyName :'-' }}</div>
                 </div>
               </div>
             </div>
@@ -361,12 +362,14 @@
 <script>
 import {
   readVal,
-  getDetailsByDeviceTypeId
+  getDetailsByDeviceTypeId,
+  deviceInforSetAddessVal
 } from '@/api/monitor'
 
 import {
   jsons
 } from '../../../mock/deviceCodeJson.js'
+
 export default {
 
   data() {
@@ -383,67 +386,13 @@ export default {
       idKey: '',
       typeKey: '', // 根据分类显示不同的菜单
       activeName: 'first',
-      tableData: [{
-        czr: 'admin',
-        czlx: '远程操作',
-        cznr: '成功启动设备指令',
-        czsj: '2020-04-19 09:36:25'
-      },
-      {
-        czr: 'admin',
-        czlx: '基本操作',
-        cznr: '迁移设备从潜合测试到客户',
-        czsj: '2020-04-19 09:36:25'
-      }
-
-      ],
-      backgroundDiv: {
-        backgroundImage: 'url(' + require('../../assets/img/cp.png') + ')',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: '28%'
-
-      },
       msg: '',
-      id: '',
-      form: [{
-        name: '湿度(%RH)',
-        value: '30'
-      },
-      {
-        name: '料位计(袋)',
-        value: '30'
-      },
-      {
-        name: '压差(Pa)',
-        value: '30'
-      },
-      {
-        name: '风量(m3/h)',
-        value: '30'
-      },
-      {
-        name: '温度(℃)',
-        value: '30'
-      },
-      {
-        name: '压力(Pa)',
-        value: '30'
-      },
-      {
-        name: '粉尘密度(mg/m3)',
-        value: '30'
-      },
-      {
-        name: '电流',
-        value: 'An'
-      }
-      ]
-
+      id: ''
     }
   },
   created: function() {
     this.idKey = this.$route.query.rowData.id
-    this.typeKey = this.$route.query.rowData.sblxid
+    this.typeKey = this.$route.query.rowData.sblxId
     this.rowData = this.$route.query.rowData
     if (this.idKey) {
       // 发起soket
@@ -460,18 +409,42 @@ export default {
     }
   },
   methods: {
+    resetValue(item) {
+      const data = this.deviceDataVals[item.jcqdz]
+      const paramData = item.cd > 1 ? data.join(',') : data
+      const param = {
+        'address1': item.jcqdz,
+        'length': item.cd,
+        'data': paramData,
+        'deviceId': this.rowData.id,
+        'typeId': this.rowData.sblxId,
+        'access_token': localStorage.getItem('accessToken')
+      }
+      deviceInforSetAddessVal(param).then(res => {
+        if (res.status !== 200) {
+          this.$alert('修改设备参数失败', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {}
+          })
+        } else {
+          console.log(res.msg)
+        }
+      })
+    },
     // 获取设备类型ID
     getTypeDetails() {
-      console.log(this.rowData.sblxid)
       const query = {
         'start': 0,
         'length': 10000,
-        'typeId': this.rowData.sblxid,
+        'typeId': this.rowData.sblxId,
         'access_token': localStorage.getItem('accessToken')
       }
       getDetailsByDeviceTypeId(query).then(res => {
         for (const i in res.data) {
           res.data[i].jcqdz = res.data[i].jcqdz.toUpperCase()
+          if (res.data[i].cd > 1) {
+            this.$set(this.deviceDataVals, res.data[i].jcqdz, new Array(res.data[i].cd).fill(''))
+          }
         }
         this.deviceDataList = res.data
       })
