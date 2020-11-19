@@ -107,7 +107,7 @@
                   <div class="label">{{ item.csmc }}</div>
                   <div style="padding-left: 0.9375rem;display: flex;width:calc(100% - 6rem)">
                     <div v-if="item.cd <= 1">
-                      <el-input v-model="deviceDataVals[item.jcqdz]" size="small" class="inputW" @blur="resetValue(item)" />
+                      <el-input v-model="deviceDataVals[item.jcqdz]" :placeholder="item.cd" size="small" class="inputW" @blur="resetValue(item)" />
                     </div>
                     <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv" :style="'padding-right:20px;width:'+(74/deviceDataVals[item.jcqdz].length)+'%;'">
                       <el-input v-model="deviceDataVals[item.jcqdz][indexv]" size="small" @blur="resetValue(item)" />
@@ -189,6 +189,24 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="参数信息">
+            <div class="msg_con" style="padding-bottom: 20px;">
+              <div style="width: 100%;font-size: .85rem;color:#333333;padding-bottom: 12px; font-weight:bold;">公共参数</div>
+              <div style="display: flex;flex-wrap: wrap; line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
+                <div v-for="(item,index) in deviceDataList" :key="index" style="display: flex;width: 50%;">
+                  <!-- <div class="label">{{ keyMapDetail[item.jcqdz]?keyMapDetail[item.jcqdz]:'未定义的参数' }}</div>
+                  <div style="margin-left: 0.9375rem;">30</div> -->
+                  <div class="label">{{ item.csmc }}</div>
+                  <div style="margin-left: 0.9375rem;display: flex;">
+                    <div v-if="!deviceDataVals[item.jcqdz] || deviceDataVals[item.jcqdz].length == 0">-</div>
+                    <div v-else-if="item.cd == 1">{{ deviceDataVals[item.jcqdz] }}</div>
+                    <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv">{{ itemv?itemv:'-' }}<span
+                      v-if="indexv < deviceDataVals[item.jcqdz].length-1"
+                    >-</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="width: 100%;font-size: .85rem;color:#333333;padding-bottom: 12px; font-weight:bold;">每周参数</div>
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
               <el-tab-pane
                 v-for="(week,indexWeek) in xwzDeviceDataList"
@@ -213,7 +231,24 @@
               </el-tab-pane>
             </el-tabs>
           </el-tab-pane>
-          <el-tab-pane label="参数信息">
+          <el-tab-pane label="参数设置">
+            <div class="msg_con" style="padding-bottom: 20px;">
+              <div style="width: 100%;font-size: .85rem;color:#333333;padding-bottom: 12px; font-weight:bold;">公共参数</div>
+              <div style="display: flex;flex-wrap: wrap;line-height: 2.8rem;border: 0.00rem solid #f4f4f4;">
+                <div v-for="(item,index) in deviceDataList" :key="index" style="display: flex;width: 50%;">
+                  <div class="label">{{ item.csmc }}</div>
+                  <div style="padding-left: 0.9375rem;display: flex;width:calc(100% - 6rem)">
+                    <div v-if="item.cd <= 1">
+                      <el-input v-model="deviceDataVals[item.jcqdz]" size="small" class="inputW" @blur="resetValue(item)" />
+                    </div>
+                    <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv" :style="'padding-right:20px;width:'+(87/deviceDataVals[item.jcqdz].length)+'%;'">
+                      <el-input v-model="deviceDataVals[item.jcqdz][indexv]" size="small" @blur="resetValue(item)" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="width: 100%;font-size: .85rem;color:#333333;padding-bottom: 12px; font-weight:bold;">每周参数</div>
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
               <el-tab-pane
                 v-for="(week,indexWeek) in xwzDeviceDataList"
@@ -225,7 +260,7 @@
                   <div v-for="(item,index) in week[numberToWeek(indexWeek+1)]" :key="index" style="display: flex;width: 50%;">
                     <!-- <div class="label">{{ keyMapDetail[item.jcqdz]?keyMapDetail[item.jcqdz]:'未定义的参数' }}</div>
                     <div style="margin-left: 0.9375rem;">30</div> -->
-                    <div class="label-xwz">{{ item.csmc+' '+item.cd }}</div>
+                    <div class="label-xwz">{{ item.csmc }}</div>
                     <div style="margin-left: 0.9375rem;display: flex;">
                       <div v-if="item.cd <= 1">
                         <el-input v-model="deviceDataVals[item.jcqdz]" size="small" class="inputW" @blur="resetValue(item)" />
@@ -357,14 +392,16 @@ export default {
             res.data[i].jcqdz = res.data[i].jcqdz.toUpperCase()
             if (res.data[i].cd > 1) {
               this.$set(this.deviceDataVals, res.data[i].jcqdz, new Array(res.data[i].cd).fill(''))
+            } else if (res.data[i].cd === 1) {
+              this.$set(this.deviceDataVals, res.data[i].jcqdz, '')
             }
           }
           this.deviceDataList = res.data
-          console.log(this.deviceDataList)
         } else {
           // 小雾桩单独处理
 
           const dataArr = []
+          const publisDataArr = []
           for (let i = 1; i <= 7; i++) {
             const obj = {}
             obj[this.numberToWeek(i)] = []
@@ -372,13 +409,18 @@ export default {
           }
           for (const i in res.data) {
             const item = res.data[i]
-            if (item.week > 0) {
-              item.jcqdz = item.jcqdz.toUpperCase()
-              if (item.cd > 1) {
-                this.$set(this.deviceDataVals, item.jcqdz, new Array(item.cd).fill(''))
-              }
-              dataArr[item.week - 1][this.numberToWeek(item.week)].push(item)
+            item.jcqdz = item.jcqdz.toUpperCase()
+            if (item.cd > 1) {
+              this.$set(this.deviceDataVals, item.jcqdz, new Array(item.cd).fill(''))
+            } else if (res.data[i].cd === 1) {
+              this.$set(this.deviceDataVals, res.data[i].jcqdz, '')
             }
+            if (item.week > 0) {
+              dataArr[item.week - 1][this.numberToWeek(item.week)].push(item)
+            } else {
+              publisDataArr.push(item)
+            }
+            this.deviceDataList = publisDataArr
           }
           this.xwzDeviceDataList = dataArr
         }
@@ -427,7 +469,7 @@ export default {
         this.doSelect()
       } else {
         const redata = JSON.parse(e.data)
-        this.$set(this.deviceDataVals, redata.cont.jcqdz.toUpperCase(), redata.cont.vals.split(','))
+        this.$set(this.deviceDataVals, redata.cont.jcqdz.toUpperCase(), redata.cont.cd > 1 ? redata.cont.vals.split(',') : redata.cont.vals)
       }
       console.log('soket:' + e.data)
       // const redata = JSON.parse(e.data)
@@ -461,17 +503,22 @@ export default {
 
 <style scoped="scoped">
   .label {
-    width: 6.875rem;
+    width: 11.875rem;
     text-align: center;
     background-color: #E8F4FF;
     color: gray;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .label-xwz {
     width: 11.875rem;
     text-align: center;
     background-color: #E8F4FF;
-    color: gray;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .topcardbg_baseinfo {
