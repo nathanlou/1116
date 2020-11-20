@@ -1,7 +1,13 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import {
+  MessageBox,
+  Message
+} from 'element-ui'
 import store from '@/store'
-import { getToken, setToken } from '@/utils/auth'
+import {
+  getToken,
+  setToken
+} from '@/utils/auth'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // create an axios instance
@@ -37,7 +43,7 @@ service.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
-  */
+   */
 
   /**
    * Determine the request status by custom status
@@ -45,35 +51,34 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status status
    */
   response => {
-    const res = response.data
-		// console.log(res)
-		// setToken(res.data.token)
-		// setToken(res.data.token)
-    // if the custom status is not 20000, it is judged as an error.
-    if (res.status !== 200) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.status === 500) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+    // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+    if (response.status === 500) {
+      // to re-login
+      MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again',
+        'Confirm logout', {
           confirmButtonText: 'Re-Login',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
         })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+      })
+      return Promise.reject(new Error('Error'))
     }
+    const res = response.data
+    // console.log(res)
+    // setToken(res.data.token)
+    // setToken(res.data.token)
+    // if the custom status is not 20000, it is judged as an error.
+    if (res.status !== 200) {
+      Message({
+        message: res.msg || 'Error',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+    return res
   },
   error => {
     // console.log('err' + error) // for debug
