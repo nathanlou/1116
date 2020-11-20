@@ -5,7 +5,7 @@
         <el-option v-for="item in company_list" :key="item.value" :label="item.companyName" :value="item.id" />
       </el-select>
       关键字：
-      <el-input v-model="query.qkeyword" placeholder="编号/内部编号/sim" class="select" size="mini" />
+      <el-input v-model="query.qKeyword" placeholder="编号/内部编号/sim" class="select" size="mini" />
       状态：<el-select v-model="query.qState" placeholder="请选择" class="select" size="mini">
         <el-option v-for="item in status_list" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -37,8 +37,8 @@
         <el-table-column fixed prop="bh" sortable label="设备编号" align="center" width="150" size="mini" />
         <el-table-column prop="companyBh" sortable label="内部编号" align="center" width="115" size="mini" />
         <el-table-column prop="gdmc" label="工地名称" width="100" align="center" size="mini" />
-        <el-table-column prop="sbxh" label="设备种类" align="center" size="mini" />
-        <el-table-column prop="sblx" label="设备型号" align="center" size="mini" />
+        <el-table-column prop="sblx" label="设备种类" align="center" size="mini" />
+        <el-table-column prop="sbxh" label="设备型号" align="center" size="mini" />
         <el-table-column prop="yxsj" sortable label="运行时间" align="center" width="110" size="mini" />
         <el-table-column prop="qdcs" sortable label="启动次数" align="center" width="110" size="mini" />
         <el-table-column prop="zt" label="设备状态" align="center" size="mini">
@@ -51,7 +51,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="isEnable" label="开机状态" align="center">
+        <!-- <el-table-column prop="isEnable" label="开机状态" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.isEnable==1" style="color:green;">
               开机
@@ -60,7 +60,7 @@
               关机
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="操作" width="280" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button class="btn btn_do" type="success" size="mini" round plain @click="monitor(scope.$index, scope.row)">监控</el-button>
@@ -109,7 +109,7 @@ export default {
         start: this.start,
         length: 20,
         qCompanyId: '',
-        qkeyword: '',
+        qKeyword: '',
         qState: '',
         qVersion: '',
         orderColumn: ''
