@@ -110,7 +110,7 @@
       <div class="table_headr">操作记录</div>
       <el-table
         ref="multipleTable"
-        :data="tableData.slice(this.queryLog.start,this.queryLog.start+this.queryLog.length)"
+        :data="tableData"
         border
         stripe
         style="width: 100%;font-size: 13px;color: gray;"
@@ -122,7 +122,15 @@
         <el-table-column prop="cznr" label="操作内容" align="center" size="mini" />
         <el-table-column prop="czsj" label="操作时间" align="center" width="180" size="mini" />
       </el-table>
-      <el-pagination class="fy" layout="total,prev, pager, next" :total="tableData.length" background @current-change="current_change" />
+      <el-pagination
+        class="fy"
+        :current-page.sync="currentPage"
+        :page-size="pagesize"
+        layout="total,prev, pager, next"
+        :total="totalCount"
+        background
+        @current-change="current_change"
+      />
     </div>
     <!-- 迁移 -->
     <el-dialog title="迁移" :visible.sync="dialogVisible" width="55%">
@@ -220,6 +228,9 @@ export default {
         length: 10,
         queryDeviceId: localStorage.getItem('id')
       },
+      currentPage: 1, // 当前页面
+      pageSize: 10, // 每页几条
+      totalCount: 0, // 总数
       tableData: []
     }
   },
@@ -249,6 +260,8 @@ export default {
     // 查询操作日志
     getOptLogList() {
       console.log(this.queryLog)
+      this.queryLog.start = this.currentPage - 1
+      this.queryLog.length = this.pageSize
       deviceOpLogListData(this.queryLog).then(res => {
         if (res.status === 200) {
           this.tableData = res.data
@@ -292,7 +305,7 @@ export default {
       })
     },
     current_change: function(currentPage) {
-      this.queryLog.start = currentPage - 1
+      this.currentPage = currentPage
       // 重新查询
       this.getOptLogList()
     },
