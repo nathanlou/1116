@@ -8,7 +8,7 @@
         <div class="centerText">
           <div><span>设备类型：</span><span>{{ rowData.sblx }}</span>
             <span v-if="rowData.deviceState == 1" class="bg_online">在线</span>
-            <span class="bg_unline">离线</span>
+            <span v-if="rowData.deviceState == 0" class="bg_unline">离线</span>
           </div>
           <div style="margin:0.9rem 0 ;"><span>所属企业：</span><span>{{ rowData.companyName ? rowData.companyName : "-" }}</span></div>
           <div><span>当前地址：</span><span>{{ rowData.rl ? rowData.rl : "-" }}</span></div>
@@ -280,7 +280,6 @@
     </div>
 
   </div>
-  </div>
 
 </template>
 
@@ -469,7 +468,8 @@ export default {
         this.doSelect()
       } else {
         const redata = JSON.parse(e.data)
-        this.$set(this.deviceDataVals, redata.cont.jcqdz.toUpperCase(), redata.cont.cd > 1 ? redata.cont.vals.split(',') : redata.cont.vals)
+        this.$set(this.deviceDataVals, redata.cont.jcqdz.toUpperCase(), redata.cont.cd > 1 ? redata.cont.vals.split(',')
+          : redata.cont.vals)
       }
       console.log('soket:' + e.data)
       // const redata = JSON.parse(e.data)
@@ -502,117 +502,117 @@ export default {
 </script>
 
 <style scoped="scoped">
-  .label {
-    width: 11.875rem;
-    text-align: center;
-    background-color: #E8F4FF;
-    color: gray;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
+	.label {
+		width: 11.875rem;
+		text-align: center;
+		background-color: #E8F4FF;
+		color: gray;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
 
-  .label-xwz {
-    width: 11.875rem;
-    text-align: center;
-    background-color: #E8F4FF;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
+	.label-xwz {
+		width: 11.875rem;
+		text-align: center;
+		background-color: #E8F4FF;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
 
-  .topcardbg_baseinfo {
-    margin: 0 auto;
-    border-radius: 1rem;
-    background-color: white;
-    width: 96%;
-    height: 500px;
+	.topcardbg_baseinfo {
+		margin: 0 auto;
+		border-radius: 1rem;
+		background-color: white;
+		width: 96%;
+		height: 500px;
 
-    margin-top: -0.5rem;
-  }
+		margin-top: -0.5rem;
+	}
 
-  .msg_con {
-    width: 60%;
+	.msg_con {
+		width: 60%;
 
-    font-size: 1.0rem;
-    color: gray;
-    font-size: 0.9rem;
-  }
+		font-size: 1.0rem;
+		color: gray;
+		font-size: 0.9rem;
+	}
 
-  .leftimg {
-    padding: 0.3125rem;
-    width: 120px;
-    height: 90px;
-    margin-left: 1.2rem;
-    margin-top: 1.2rem;
-  }
+	.leftimg {
+		padding: 0.3125rem;
+		width: 120px;
+		height: 90px;
+		margin-left: 1.2rem;
+		margin-top: 1.2rem;
+	}
 
-  .centerText {
-    width: 50%;
-    margin-top: 1.2rem;
-    margin-left: 1.2rem;
-    color: gray;
-  }
+	.centerText {
+		width: 50%;
+		margin-top: 1.2rem;
+		margin-left: 1.2rem;
+		color: gray;
+	}
 
-  .bg_online {
-    background-color: #1890FF;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
-    border-radius: 2rem;
-    color: white;
-    margin-left: 1.2rem;
-  }
+	.bg_online {
+		background-color: #1890FF;
+		padding-top: 0.2rem;
+		padding-bottom: 0.2rem;
+		padding-left: 0.8rem;
+		padding-right: 0.8rem;
+		border-radius: 2rem;
+		color: white;
+		margin-left: 1.2rem;
+	}
 
-  .bg_unline {
-    background-color: #ff0000;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
-    border-radius: 2rem;
-    color: white;
-    margin-left: 1.2rem;
-  }
+	.bg_unline {
+		background-color: #ff0000;
+		padding-top: 0.2rem;
+		padding-bottom: 0.2rem;
+		padding-left: 0.8rem;
+		padding-right: 0.8rem;
+		border-radius: 2rem;
+		color: white;
+		margin-left: 1.2rem;
+	}
 
-  .inputW {
-    width: 15rem;
-  }
+	.inputW {
+		width: 15rem;
+	}
 
-  @media screen and (max-width: 1024px) {
-    .leftimg {
-      padding: 0.3125rem;
-      width: 6rem;
-      height: 5rem;
-      margin-left: 1.2rem;
-      margin-top: 1.2rem;
-    }
+	@media screen and (max-width: 1024px) {
+		.leftimg {
+			padding: 0.3125rem;
+			width: 6rem;
+			height: 5rem;
+			margin-left: 1.2rem;
+			margin-top: 1.2rem;
+		}
 
-    .centerText {
-      width: 50%;
-      margin-top: 1.5rem;
-      margin-left: 1.2rem;
-      font-size: 0.9rem;
-    }
+		.centerText {
+			width: 50%;
+			margin-top: 1.5rem;
+			margin-left: 1.2rem;
+			font-size: 0.9rem;
+		}
 
-    .msg_con {
-      width: 80%;
+		.msg_con {
+			width: 80%;
 
-      font-size: 1.0rem;
-      color: gray;
-      font-size: 0.8rem;
-    }
+			font-size: 1.0rem;
+			color: gray;
+			font-size: 0.8rem;
+		}
 
-    .label {
-      width: 6rem;
-      text-align: center;
-      background-color: #E8F4FF;
-    }
+		.label {
+			width: 6rem;
+			text-align: center;
+			background-color: #E8F4FF;
+		}
 
-    .inputW {
-      width: 10rem;
-    }
+		.inputW {
+			width: 10rem;
+		}
 
-  }
+	}
 </style>

@@ -38,7 +38,7 @@
     />
 
     <!-- 添加 -->
-    <el-dialog title="添加种类" :visible.sync="dialogFormVisible">
+    <el-dialog title="添加参数" :visible.sync="dialogFormVisible">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="类型ID" prop="typeId" size="small">
           <el-input v-model="form.typeId" disabled style="width: 18.75rem;" />
@@ -76,13 +76,53 @@
         <el-button type="primary" @click="addsubmit('form')">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 修改 -->
+    <el-dialog title="修改参数" :visible.sync="dialogFormVisible1">
+      <el-form ref="form1" :model="form1" :rules="rules" label-width="100px">
+        <el-form-item label="类型ID" prop="typeId" size="small">
+          <el-input v-model="form1.typeId" disabled style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="参数名称" prop="csmc" size="small">
+          <el-input v-model="form1.csmc" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="寄存器地址" prop="jcqdz" size="small">
+          <el-input v-model="form1.jcqdz" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="长度" prop="cd" size="small">
+          <el-input v-model="form1.cd" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="数据类型" prop="sjlx" size="small">
+          <el-input v-model="form1.sjlx" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="读写方式" prop="dxfs" size="small">
+          <el-input v-model="form1.dxfs" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="描述" size="small">
+          <el-input v-model="form1.ms" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item label="是否启用" size="small">
+          <el-switch v-model="form1.isEnable" active-value="1" inactive-value="0" />
+        </el-form-item>
+        <el-form-item label="备注" size="small">
+          <el-input v-model="form1.bz" style="width: 18.75rem;" />
+        </el-form-item>
+        <el-form-item v-if="week == true" label="星期几" size="small">
+          <el-input v-model="form1.week" style="width: 18.75rem;" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="addsubmit1('form1')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
   parameter,
-  addparameters
+  addparameters,
+  delparameters
 } from '@/api/sys'
 export default {
   data() {
@@ -100,10 +140,26 @@ export default {
         typeId: this.$route.query.id
       },
       dialogFormVisible: false,
+      dialogFormVisible1: false,
       week: false,
       form: {
         access_token: localStorage.getItem('accessToken'),
         action: 'save',
+        id: '',
+        typeId: this.$route.query.id,
+        csmc: '',
+        jcqdz: '',
+        cd: '',
+        sjlx: '',
+        dxfs: '',
+        ms: '',
+        isEnable: '1',
+        bz: '',
+        week: '0'
+      },
+      form1: {
+        access_token: localStorage.getItem('accessToken'),
+        action: 'update',
         id: '',
         typeId: this.$route.query.id,
         csmc: '',
@@ -159,6 +215,35 @@ export default {
     goBack() {
       this.$router.go(-1) // 返回上一层
     },
+    modify(index, row) {
+      this.form1.cd = row.cd
+      this.form1.ms = row.ms
+      this.form1.id = row.id
+      this.form1.dxfs = row.dxfs
+      this.form1.csmc = row.csmc
+      this.form1.week = row.week
+      this.form1.jcqdz = row.jcqdz
+      this.form1.sjlx = row.sjlx
+      this.dialogFormVisible1 = true
+    },
+    deletes(index, row) {
+      var mymessage = confirm('您确定删除吗?')
+      if (mymessage === true) {
+        const query = {
+          access_token: localStorage.getItem('accessToken'),
+          id: row.id
+        }
+        delparameters(query).then(res => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          location.reload()
+        }).catch(() => {
+
+        })
+      }
+    },
     getlist() {
       parameter(this.query).then(res => {
         console.log(res)
@@ -185,6 +270,19 @@ export default {
         if (valid) {
           addparameters(this.form).then(res => {
             this.dialogFormVisible = false
+            location.reload()
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    addsubmit1(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          addparameters(this.form1).then(res => {
+            this.dialogFormVisible1 = false
             location.reload()
           })
         } else {

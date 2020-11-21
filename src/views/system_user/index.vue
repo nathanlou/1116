@@ -2,55 +2,64 @@
   <div class="titles">
     <div class="screenD">
       <div class="screen">
-          公司名称/账号：<el-input v-model="qhkeyword" placeholder="" class="select" size='mini'/>
-          权限：<el-select v-model="qx_value" placeholder="请选择"  size='mini' class="select">
-                 <el-option v-for="item in qx_list" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-     </div>
+        公司名称/账号：
+        <el-input v-model="qhkeyword" placeholder="" class="select" size="mini" />
+        权限：<el-select v-model="qx_value" placeholder="请选择" size="mini" class="select">
+          <el-option v-for="item in qx_list" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </div>
       <div style="display: flex;">
-         <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round>搜索</el-button>
-        <el-button class="btn" type="primary" icon="el-icon-edit" size="mini" @click="tjdialog = true" round>添加信息</el-button>
+        <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round>搜索</el-button>
+        <el-button class="btn" type="primary" icon="el-icon-edit" size="mini" round @click="tjdialog = true">添加信息</el-button>
       </div>
     </div>
     <div class="container_table">
-			<div class="table_headr">用户列表</div>
+      <div class="table_headr">用户列表</div>
       <el-table
         ref="multipleTable"
-        :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+        :data="tableData"
         border
         stripe
         style="width: 99%;font-size: 13px;"
         :default-sort="{prop: 'date', order: 'descending'}"
-        size='mini'
+        size="mini"
       >
-        <el-table-column prop="zh" label="账号" align="center" width="140"  fixed/>
-        <el-table-column prop="gsmc" label="公司名称" align="center" width="120"/>
-        <el-table-column prop="qx" label="权限" align="center" width="120" />
-        <el-table-column prop="zhdlsj" label="最后登录时间" align="center" width="170" />
-        <el-table-column prop="qy" label="是否启用" align="center">
+        <el-table-column prop="userName" label="账号" align="center" width="140" fixed />
+        <el-table-column prop="name" label="姓名" align="center" width="120" />
+        <el-table-column prop="roles" label="权限" align="center" width="120" />
+        <el-table-column prop="deptName" label="所属部门" align="center" width="120" />
+        <el-table-column prop="lastLogin" label="最后登录时间" align="center" width="170" />
+        <el-table-column prop="iphone" label="联系电话" align="center" width="170" />
+        <el-table-column prop="isEnable" label="是否启用" align="center">
           <template slot-scope="scope" width="100">
-            <el-tag :type="scope.row.qy === '启用' ? 'primary' : 'danger'" disable-transitions size="mini">{{ scope.row.qy }}</el-tag>
+            <div v-if="scope.row.isEnable==1" style="color:green;">
+              启用
+            </div>
+            <div v-else style="color:red;">
+              禁用
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="权限设置" align="center" width="130">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="fenpei(scope.$index, scope.row)" round plain>分配权限</el-button>
+            <el-button type="primary" size="mini" round plain @click="fenpei(scope.$index, scope.row)">分配权限</el-button>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="250" align="center" fixed="right">
           <template slot-scope="scope">
-            <el-button type="success" size="mini" @click="czmm(scope.$index, scope.row)" round plain>重置密码</el-button>
-            <el-button type="warning" size="mini" @click="xiugai(scope.$index, scope.row)" round plain>修改</el-button>
-            <el-button type="danger" size="mini" @click="handleDelete(scope.$index, scope.row)" round plain>删除</el-button>
+            <el-button type="success" size="mini" round plain @click="czmm(scope.$index, scope.row)">重置密码</el-button>
+            <el-button type="warning" size="mini" round plain @click="xiugai(scope.$index, scope.row)">修改</el-button>
+            <el-button type="danger" size="mini" round plain @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         class="fy"
-        layout="total,prev, pager, next"
+        :current-page.sync="currentPage"
+        :page-size="20"
+        layout="total, prev, pager, next"
         :total="total"
-        background
-        @current-change="current_change"
+        @current-change="handleCurrentChange"
       />
       <!-- 分配权限 -->
       <el-dialog title="分配权限" :visible.sync="fpqxdialog" width="30%">
@@ -70,8 +79,8 @@
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="fpqxdialog = false" size='mini'>取 消</el-button>
-          <el-button type="primary" @click="fpqxdialog = false" size='mini'>确 定</el-button>
+          <el-button size="mini" @click="fpqxdialog = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="fpqxdialog = false">确 定</el-button>
         </span>
       </el-dialog>
       <!-- 分配权限 -->
@@ -81,16 +90,16 @@
           <el-form-item label="登录账号" prop="age">
             {{ zh }}
           </el-form-item>
-          <el-form-item label="密码" prop="pass" size='mini'>
-            <el-input v-model="ruleForm.pass" type="password" autocomplete="off" size='mini'/>
+          <el-form-item label="密码" prop="pass" size="mini">
+            <el-input v-model="ruleForm.pass" type="password" autocomplete="off" size="mini" />
           </el-form-item>
-          <el-form-item label="确认密码" prop="checkPass" size='mini'>
-            <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" size='mini'/>
+          <el-form-item label="确认密码" prop="checkPass" size="mini">
+            <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" size="mini" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="czmmdialog = false" size='mini'>取 消</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')" size='mini'>确 定</el-button>
+          <el-button size="mini" @click="czmmdialog = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="submitForm('ruleForm')">确 定</el-button>
         </span>
       </el-dialog>
       <!-- 重置密码 -->
@@ -103,52 +112,52 @@
           <el-form-item label="公司名称" prop="gsmc">
             {{ company }}
           </el-form-item>
-          <el-form-item label="权限" prop="qx" size='mini'>
-            <el-select v-model="xgruleForm.qx" placeholder="请选择" size='mini'>
+          <el-form-item label="权限" prop="qx" size="mini">
+            <el-select v-model="xgruleForm.qx" placeholder="请选择" size="mini">
               <el-option label="超级管理员" value="super" />
               <el-option label="系统管理员" value="admin" />
               <el-option label="企业管理员" value="company" />
             </el-select>
           </el-form-item>
-          <el-form-item label="手机号码" prop="phone" size='mini'>
-            <el-input v-model="xgruleForm.phone"  size='mini'/>
+          <el-form-item label="手机号码" prop="phone" size="mini">
+            <el-input v-model="xgruleForm.phone" size="mini" />
           </el-form-item>
           <el-form-item label="是否启用" prop="qy">
             <el-switch v-model="xgruleForm.qy" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false" size='mini'>取 消</el-button>
-          <el-button type="primary" @click="xgsubmitForm('xgruleForm')" size='mini'>确 定</el-button>
+          <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="xgsubmitForm('xgruleForm')">确 定</el-button>
         </span>
       </el-dialog>
       <!-- 修改信息 -->
       <!-- 添加信息 -->
       <el-dialog title="添加信息" :visible.sync="tjdialog" width="30%">
         <el-form ref="tjruleForm" :model="tjruleForm" status-icon :rules="tjrules" label-width="80px" class="demo-ruleForm">
-          <el-form-item label="登录账号" prop="zh" size='mini'>
+          <el-form-item label="登录账号" prop="zh" size="mini">
             <el-input v-model="tjruleForm.zh" />
           </el-form-item>
-          <el-form-item label="公司名称" prop="gsmc" size='mini'>
+          <el-form-item label="公司名称" prop="gsmc" size="mini">
             <el-input v-model="tjruleForm.gsmc" />
           </el-form-item>
-          <el-form-item label="权限" prop="qx" size='mini'>
-            <el-select v-model="tjruleForm.qx" placeholder="请选择" size='mini'>
+          <el-form-item label="权限" prop="qx" size="mini">
+            <el-select v-model="tjruleForm.qx" placeholder="请选择" size="mini">
               <el-option label="超级管理员" value="super" />
               <el-option label="系统管理员" value="admin" />
               <el-option label="企业管理员" value="company" />
             </el-select>
           </el-form-item>
-          <el-form-item label="手机号码" prop="phone" size='mini'>
+          <el-form-item label="手机号码" prop="phone" size="mini">
             <el-input v-model="tjruleForm.phone" />
           </el-form-item>
-          <el-form-item label="是否启用" prop="qy" size='mini'>
+          <el-form-item label="是否启用" prop="qy" size="mini">
             <el-switch v-model="tjruleForm.qy" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="tjdialog = false" size='mini'>取 消</el-button>
-          <el-button type="primary" @click="tjsubmitForm('tjruleForm')" size='mini'>确 定</el-button>
+          <el-button size="mini" @click="tjdialog = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="tjsubmitForm('tjruleForm')">确 定</el-button>
         </span>
       </el-dialog>
       <!-- 添加信息 -->
@@ -157,6 +166,9 @@
 </template>
 
 <script>
+import {
+  sysUser_listData
+} from '@/api/sys'
 export default {
   data() {
     var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/
@@ -326,16 +338,32 @@ export default {
           validator: validatePass2,
           trigger: 'blur'
         }]
+      },
+      start: 0,
+      query: {
+        access_token: localStorage.getItem('accessToken'),
+        start: this.start,
+        length: 20,
+        queryName: '',
+        queryDeptId: '',
+        queryRole: ''
       }
     }
   },
   created: function() {
-    this.total = this.tableData.length
+    this.getlist()
   },
   methods: {
+    getlist() {
+      sysUser_listData(this.query).then(res => {
+        console.log(res)
+        this.tableData = res.data
+        this.total = res.recordsTotal
+      })
+    },
     handleDelete(index, row) {
-			        this.tableData.splice(index, 1)
-			      },
+      this.tableData.splice(index, 1)
+    },
     czmm(index, row) {
       this.czmmdialog = true
       this.zh = row.zh
@@ -347,6 +375,11 @@ export default {
       this.dialogVisible = true
       this.zh = row.zh
       this.company = row.gsmc
+    },
+    handleCurrentChange(val) {
+      var that = this
+      that.query.start = (val - 1) * 20
+      this.getlist(that.start)
     },
     current_change: function(currentPage) {
       this.currentPage = currentPage
@@ -386,25 +419,27 @@ export default {
 </script>
 
 <style scoped="scoped">
-  .table_headr{
-    width: 99%;
-  }
-  .screenD{
-    display: flex;
-    align-items: center;
-    width: 99%;
+	.table_headr {
+		width: 99%;
+	}
 
-  }
+	.screenD {
+		display: flex;
+		align-items: center;
+		width: 99%;
+
+	}
+
 	.screen {
 		font-size: 0.875rem;
-    width: 98%;
-    margin-right: 1%;
-    margin-top: -0.8%;
+		width: 98%;
+		margin-right: 1%;
+		margin-top: -0.8%;
 	}
 
 	.select {
 		width: 20%;
-    margin-right: 1%;
+		margin-right: 1%;
 	}
 
 	.fy {
@@ -418,7 +453,7 @@ export default {
 		height: 100%;
 		margin-bottom: 1.25rem;
 		font-size: 0.875rem;
-    color: gray;
+		color: gray;
 
 	}
 
@@ -430,23 +465,24 @@ export default {
 	.container_table {
 		clear: both;
 	}
-  .demo-ruleForm{
-    color: gray;
-  }
+
+	.demo-ruleForm {
+		color: gray;
+	}
 
 	@media screen and (max-width: 1024px) {
-    .titles {
-    	width: 98%;
-    	margin-left: 2%;
-    	height: 100%;
-    	margin-bottom: 1.25rem;
-    	font-size: 0.875rem;
-      color: gray;
-      margin-top: -2.5%;
-    }
-    .screen{
+		.titles {
+			width: 98%;
+			margin-left: 2%;
+			height: 100%;
+			margin-bottom: 1.25rem;
+			font-size: 0.875rem;
+			color: gray;
+			margin-top: -2.5%;
+		}
 
-    }
+		.screen {}
+
 		.titles {
 			font-size: 0.875rem;
 		}

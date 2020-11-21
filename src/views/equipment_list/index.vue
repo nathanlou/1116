@@ -43,7 +43,7 @@
         <el-table-column prop="qdcs" sortable label="启动次数" align="center" width="110" size="mini" />
         <el-table-column prop="zt" label="设备状态" align="center" size="mini">
           <template slot-scope="scope">
-            <div v-if="scope.row.zt==1" style="color:green;">
+            <div v-if="scope.row.deviceState==1" style="color:green;">
               在线
             </div>
             <div v-else style="color:red;">
@@ -132,6 +132,7 @@ export default {
     getlist() {
       const that = this
       equipment_list(that.query).then(res => {
+        console.log(res)
         this.tableData = res.data
         this.total = res.recordsTotal
       })
