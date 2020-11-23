@@ -209,7 +209,6 @@ export default {
   created: function() {
     this.getlist()
     this.handleCurrentChange()
-    console.log(this.id)
   },
   methods: {
     goBack() {
@@ -246,7 +245,6 @@ export default {
     },
     getlist() {
       parameter(this.query).then(res => {
-        console.log(res)
         this.tableData = res.data
         this.total = res.recordsTotal
       })

@@ -2,14 +2,11 @@
   <div class="titles">
     <div class="screenD">
       <div class="screen">
-        公司名称/账号：
-        <el-input v-model="qhkeyword" placeholder="" class="select" size="mini" />
-        权限：<el-select v-model="qx_value" placeholder="请选择" size="mini" class="select">
-          <el-option v-for="item in qx_list" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
+        部门名称：
+        <el-input v-model="query.queryName" placeholder="" class="select" size="mini" />
       </div>
       <div style="display: flex;">
-        <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round>搜索</el-button>
+        <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round @click="getlist">搜索</el-button>
         <el-button class="btn" type="primary" icon="el-icon-edit" size="mini" round @click="tjdialog = true">添加信息</el-button>
       </div>
     </div>
@@ -66,21 +63,15 @@
         <div>
           <div style="margin-bottom: 0.625rem;">
             <el-radio-group v-model="radio">
-              <div style="padding: 0.5rem 0.5rem;">
-                <el-radio :label="3">超级管理员</el-radio>
-              </div>
-              <div style="padding: 0.5rem 0.5rem;">
-                <el-radio :label="6">系统管理员</el-radio>
-              </div>
-              <div style="padding: 0.5rem 0.5rem;">
-                <el-radio :label="9">企业管理员</el-radio>
+              <div v-for="(item,index) in roleId_list" :key="index" style="padding: 0.5rem 0.5rem;">
+                <el-radio :label="item.id">{{ item.name }}</el-radio>
               </div>
             </el-radio-group>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="fpqxdialog = false">取 消</el-button>
-          <el-button type="primary" size="mini" @click="fpqxdialog = false">确 定</el-button>
+          <el-button type="primary" size="mini" @click="fpqxclick">确 定</el-button>
         </span>
       </el-dialog>
       <!-- 分配权限 -->
@@ -106,24 +97,27 @@
       <!-- 修改信息 -->
       <el-dialog title="修改信息" :visible.sync="dialogVisible" width="30%">
         <el-form ref="xgruleForm" :model="xgruleForm" status-icon :rules="xgrules" label-width="80px" class="demo-ruleForm">
-          <el-form-item label="登录账号" prop="zh">
-            {{ zh }}
+          <el-form-item label="用户名" prop="userName" size="mini">
+            {{ xgruleForm.userName }}
           </el-form-item>
-          <el-form-item label="公司名称" prop="gsmc">
-            {{ company }}
-          </el-form-item>
-          <el-form-item label="权限" prop="qx" size="mini">
-            <el-select v-model="xgruleForm.qx" placeholder="请选择" size="mini">
-              <el-option label="超级管理员" value="super" />
-              <el-option label="系统管理员" value="admin" />
-              <el-option label="企业管理员" value="company" />
+          <el-form-item label="部门" prop="deptId" size="mini">
+            <el-select v-model="xgruleForm.deptId" placeholder="请选择" size="mini">
+              <el-option v-for="item in deptId_list" :key="item.value" :label="item.deptName" :value="item.id" />
             </el-select>
           </el-form-item>
-          <el-form-item label="手机号码" prop="phone" size="mini">
-            <el-input v-model="xgruleForm.phone" size="mini" />
+          <el-form-item label="是否启用" prop="isEnable" size="mini">
+            <el-switch v-model="xgruleForm.isEnable" :active-value="1" :inactive-value="0" />
           </el-form-item>
-          <el-form-item label="是否启用" prop="qy">
-            <el-switch v-model="xgruleForm.qy" />
+          <el-form-item label="名称" prop="name" size="mini">
+            <el-input v-model="xgruleForm.name" />
+          </el-form-item>
+          <el-form-item label="手机号码" prop="iphone" size="mini">
+            <el-input v-model="xgruleForm.iphone" />
+          </el-form-item>
+          <el-form-item label="岗位角色" prop="roleId" size="mini">
+            <el-select v-model="xgruleForm.roleId" placeholder="请选择" size="mini">
+              <el-option v-for="item in roleId_list" :key="item.value" :label="item.name" :value="item.id" />
+            </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -135,24 +129,30 @@
       <!-- 添加信息 -->
       <el-dialog title="添加信息" :visible.sync="tjdialog" width="30%">
         <el-form ref="tjruleForm" :model="tjruleForm" status-icon :rules="tjrules" label-width="80px" class="demo-ruleForm">
-          <el-form-item label="登录账号" prop="zh" size="mini">
-            <el-input v-model="tjruleForm.zh" />
+          <el-form-item label="用户名" prop="userName" size="mini">
+            <el-input v-model="tjruleForm.userName" />
           </el-form-item>
-          <el-form-item label="公司名称" prop="gsmc" size="mini">
-            <el-input v-model="tjruleForm.gsmc" />
+          <el-form-item label="密码" prop="password" size="mini">
+            <el-input v-model="tjruleForm.password" maxlength="16" />
           </el-form-item>
-          <el-form-item label="权限" prop="qx" size="mini">
-            <el-select v-model="tjruleForm.qx" placeholder="请选择" size="mini">
-              <el-option label="超级管理员" value="super" />
-              <el-option label="系统管理员" value="admin" />
-              <el-option label="企业管理员" value="company" />
+          <el-form-item label="部门" prop="deptId" size="mini">
+            <el-select v-model="tjruleForm.deptId" placeholder="请选择" size="mini">
+              <el-option v-for="item in deptId_list" :key="item.value" :label="item.deptName" :value="item.id" />
             </el-select>
           </el-form-item>
-          <el-form-item label="手机号码" prop="phone" size="mini">
-            <el-input v-model="tjruleForm.phone" />
+          <el-form-item label="是否启用" prop="isEnable" size="mini">
+            <el-switch v-model="tjruleForm.isEnable" :active-value="1" :inactive-value="0" />
           </el-form-item>
-          <el-form-item label="是否启用" prop="qy" size="mini">
-            <el-switch v-model="tjruleForm.qy" />
+          <el-form-item label="名称" prop="name" size="mini">
+            <el-input v-model="tjruleForm.name" />
+          </el-form-item>
+          <el-form-item label="手机号码" prop="iphone" size="mini">
+            <el-input v-model="tjruleForm.iphone" />
+          </el-form-item>
+          <el-form-item label="岗位角色" prop="roleId" size="mini">
+            <el-select v-model="tjruleForm.roleId" placeholder="请选择" size="mini">
+              <el-option v-for="item in roleId_list" :key="item.value" :label="item.name" :value="item.id" />
+            </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -167,7 +167,13 @@
 
 <script>
 import {
-  sysUser_listData
+  sysUser_listData,
+  sysDept_list,
+  sysUser_save,
+  sysUserdel,
+  sysReset,
+  sysPower,
+  sysPower_save
 } from '@/api/sys'
 export default {
   data() {
@@ -204,7 +210,8 @@ export default {
       }
     }
     return {
-      radio: 3,
+      userId: '',
+      radio: '',
       fpqxdialog: false,
       czmmdialog: false,
       dialogVisible: false,
@@ -213,45 +220,9 @@ export default {
       pagesize: 10, // 每页的数据条数
       currentPage: 1, // 默认开始页面
       istag: true,
-      tableData: [{
-        zh: 'qhsuperadmin',
-        gsmc: '潜合自动化',
-        qx: '超级管理员',
-        zhdlsj: '2020-04-19 09:25:45',
-        qy: '启用'
-      },
-      {
-        zh: 'admin',
-        gsmc: '宝鸡石化',
-        qx: '系统管理员',
-        zhdlsj: '2020-04-19 09:25:45',
-        qy: '启用'
-      },
-      {
-        zh: 'lingxian',
-        gsmc: '山东领先',
-        qx: '企业管理员',
-        zhdlsj: '2020-04-19 09:25:45',
-        qy: '启用'
-      }
-      ],
-      qycompany: [{
-        value: '选项1',
-        label: '潜合测试'
-      }, {
-        value: '选项2',
-        label: '客户体验'
-      }],
-      company_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: '潜合测试'
-      }, {
-        value: '选项2',
-        label: '客户体验'
-      }],
+      tableData: [],
+      deptId_list: [],
+      roleId_list: [],
       qx_list: [{
         value: '选项0',
         label: '全部'
@@ -273,67 +244,118 @@ export default {
         label: '离线'
       }],
       company: '',
-      qx_value: '',
       status_value: '',
       qhkeyword: '',
       bh: '',
       zh: '',
+      id: '',
       qyvalue: '',
       ruleForm: {
         pass: '',
         checkPass: ''
       },
       xgruleForm: {
-        qx: '',
-        phone: '',
-        qy: true
+        access_token: localStorage.getItem('accessToken'),
+        action: 'update',
+        userName: '',
+        password: '',
+        deptId: '',
+        isEnable: 1,
+        name: '',
+        iphone: '',
+        sex: '男',
+        roleId: '',
+        id: ''
       },
       xgrules: {
-        qx: [{
+        userName: [{
+          required: true,
+          trigger: 'blur',
+          message: '该项为必填项'
+        }],
+        deptId: [{
           required: true,
           message: '请选择',
           trigger: 'change'
         }],
-        phone: [{
+        name: [{
+          required: true,
+          trigger: 'blur',
+          message: '该项为必填项'
+        }],
+        iphone: [{
           required: true,
           trigger: 'blur',
           validator: validatePhone
+        }],
+        roleId: [{
+          required: true,
+          message: '请选择',
+          trigger: 'change'
         }]
       },
       tjruleForm: {
-        zh: '',
-        gsmc: '',
-        qx: '',
-        phone: '',
-        qy: true
+        access_token: localStorage.getItem('accessToken'),
+        action: 'save',
+        userName: '',
+        password: '',
+        deptId: '',
+        isEnable: 1,
+        name: '',
+        iphone: '',
+        sex: '男',
+        roleId: '',
+        id: ''
       },
       tjrules: {
-        zh: [{
+        userName: [{
           required: true,
           trigger: 'blur',
           message: '该项为必填项'
         }],
-        gsmc: [{
+        password: [{
           required: true,
           trigger: 'blur',
           message: '该项为必填项'
-        }],
-        qx: [{
+        },
+        {
+          min: 8,
+          max: 16,
+          message: '长度在 8 到 16 个字符'
+        }
+        ],
+        deptId: [{
           required: true,
           message: '请选择',
           trigger: 'change'
         }],
-        phone: [{
+        name: [{
+          required: true,
+          trigger: 'blur',
+          message: '该项为必填项'
+        }],
+        iphone: [{
           required: true,
           trigger: 'blur',
           validator: validatePhone
+        }],
+        roleId: [{
+          required: true,
+          message: '请选择',
+          trigger: 'change'
         }]
       },
       rules: {
         pass: [{
           validator: validatePass,
           trigger: 'blur'
-        }],
+        },
+        {
+          min: 8,
+          max: 16,
+          message: '长度在 8 到 16 个字符'
+        }
+        ],
         checkPass: [{
           validator: validatePass2,
           trigger: 'blur'
@@ -352,29 +374,81 @@ export default {
   },
   created: function() {
     this.getlist()
+    this.sysDept_list()
   },
   methods: {
+    sysDept_list() {
+      const query = {
+        start: '0',
+        length: 200,
+        access_token: localStorage.getItem('accessToken'),
+        queryName: ''
+      }
+      sysDept_list(query).then(res => {
+        this.deptId_list = res.data
+      })
+      const querys = {
+        access_token: localStorage.getItem('accessToken'),
+        userId: ''
+      }
+      sysPower(querys).then(res => {
+        this.roleId_list = res
+      })
+    },
+    fpqxclick() {
+      const query = {
+        access_token: localStorage.getItem('accessToken'),
+        userId: this.userId,
+        roleIds: this.radio
+      }
+      sysPower_save(query).then(res => {
+        this.fpqxdialog = false
+        location.reload()
+      })
+    },
     getlist() {
       sysUser_listData(this.query).then(res => {
-        console.log(res)
         this.tableData = res.data
         this.total = res.recordsTotal
       })
     },
     handleDelete(index, row) {
-      this.tableData.splice(index, 1)
+      var mymessage = confirm('您确定删除吗?')
+      if (mymessage === true) {
+        const query = {
+          access_token: localStorage.getItem('accessToken'),
+          id: row.id
+        }
+        sysUserdel(query).then(res => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          location.reload()
+        }).catch(() => {
+
+        })
+      }
     },
     czmm(index, row) {
       this.czmmdialog = true
-      this.zh = row.zh
+      this.zh = row.userName
+      this.id = row.id
     },
     fenpei(index, row) {
       this.fpqxdialog = true
+      this.radio = row.roleId
+      this.userId = row.id
     },
     xiugai(index, row) {
       this.dialogVisible = true
-      this.zh = row.zh
-      this.company = row.gsmc
+      this.xgruleForm.userName = row.userName
+      this.xgruleForm.deptId = row.deptId
+      this.xgruleForm.isEnable = row.isEnable
+      this.xgruleForm.name = row.name
+      this.xgruleForm.iphone = row.iphone
+      this.xgruleForm.roleId = row.roleId
+      this.xgruleForm.id = row.id
     },
     handleCurrentChange(val) {
       var that = this
@@ -387,7 +461,24 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          var mymessage = confirm('您确定重置密码吗?')
+          if (mymessage === true) {
+            const query = {
+              access_token: localStorage.getItem('accessToken'),
+              id: this.id,
+              newPassword: this.ruleForm.checkPass
+            }
+            sysReset(query).then(res => {
+              this.$message({
+                message: '重置成功',
+                type: 'success'
+              })
+              this.czmmdialog = false
+              location.reload()
+            }).catch(() => {
+
+            })
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -397,7 +488,20 @@ export default {
     xgsubmitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          console.log(this.xgruleForm)
+          var mymessage = confirm('您确定要修改吗?')
+          if (mymessage === true) {
+            sysUser_save(this.xgruleForm).then(res => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              })
+              this.dialogVisible = false
+              location.reload()
+            }).catch(() => {
+
+            })
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -407,7 +511,16 @@ export default {
     tjsubmitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          sysUser_save(this.tjruleForm).then(res => {
+            if (res.status === 200) {
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
+              this.tjdialog = false
+              location.reload()
+            }
+          })
         } else {
           console.log('error submit!!')
           return false

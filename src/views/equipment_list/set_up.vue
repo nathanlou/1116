@@ -20,7 +20,7 @@
         </div>
         <div style="display: flex;width: 50%;">
           <div class="label">SIM卡号：</div>
-          <div style="margin-left: 0.9375rem;">{{ msg.sim }}  <span style="color: dodgerblue;">  正常</span></div>
+          <div style="margin-left: 0.9375rem;">{{ msg.sim }} <span style="color: dodgerblue;"> 正常</span></div>
         </div>
       </div>
       <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">
@@ -117,10 +117,10 @@
         :default-sort="{prop: 'date', order: 'descending'}"
         size="mini"
       >
-        <el-table-column prop="czr" label="操作人" align="center" size="mini" />
+        <el-table-column prop="createUserName" label="操作人" align="center" size="mini" />
         <el-table-column prop="czlx" sortable label="操作类型" align="center" size="mini" />
         <el-table-column prop="cznr" label="操作内容" align="center" size="mini" />
-        <el-table-column prop="czsj" label="操作时间" align="center" width="180" size="mini" />
+        <el-table-column prop="createTime" label="操作时间" align="center" width="180" size="mini" />
       </el-table>
       <el-pagination
         class="fy"
@@ -204,9 +204,18 @@
 </template>
 
 <script>
-import { equipment_del, equipment_msg, company_listData } from '@/api/getlist'
-import { deviceTransferSave, deviceOpLogListData } from '@/api/deviceSetUp.js'
-import { parseTime } from '@/utils/index.js'
+import {
+  equipment_del,
+  equipment_msg,
+  company_listData
+} from '@/api/getlist'
+import {
+  deviceTransferSave,
+  deviceOpLogListData
+} from '@/api/deviceSetUp.js'
+import {
+  parseTime
+} from '@/utils/index.js'
 export default {
   data() {
     return {
@@ -265,7 +274,7 @@ export default {
       deviceOpLogListData(this.queryLog).then(res => {
         if (res.status === 200) {
           this.tableData = res.data
-          console.log('---', this.tableData)
+          this.totalCount = res.recordsTotal
         } else {
           this.$message.error('加载操作日志列表失败')
         }
@@ -350,7 +359,7 @@ export default {
     },
     deletes() {
       var mymessage = confirm('您确定删除该设备吗?')
-      if (mymessage == true) {
+      if (mymessage === true) {
         const query = {
           access_token: localStorage.getItem('accessToken'),
           id: this.msg.id
@@ -378,35 +387,39 @@ export default {
 	.label {
 		width: 6.875rem;
 		text-align: center;
-		background-color:  #E8F4FF;
+		background-color: #E8F4FF;
 
 	}
-.table_headr{
-    height: 2rem;
-    line-height: 2rem;
-    color: white;
-    background-color: #409EFF ;
-  }
+
+	.table_headr {
+		height: 2rem;
+		line-height: 2rem;
+		color: white;
+		background-color: #409EFF;
+	}
+
 	.msg_con {
 		width: 80%;
 		margin-left: 10%;
-     font-size: 1.0rem;
+		font-size: 1.0rem;
 	}
-	.container_table{
+
+	.container_table {
 		margin-top: 1%;
 	}
-	.fy{
+
+	.fy {
 		margin-top: 1%;
 		margin-bottom: 1%;
 		text-align: right;
 	}
 
-  @media screen and (max-width: 1024px) {
-  	.msg_con{
-  		width: 80%;
-  		margin-left: 0;
-      font-size: 0.9rem;
-  	}
+	@media screen and (max-width: 1024px) {
+		.msg_con {
+			width: 80%;
+			margin-left: 0;
+			font-size: 0.9rem;
+		}
 
-  }
+	}
 </style>

@@ -89,8 +89,8 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('请输入至少6位的密码'))
+      if (value.length < 8) {
+        callback(new Error('请输入至少8位的密码'))
       } else {
         callback()
       }

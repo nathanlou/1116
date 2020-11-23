@@ -90,6 +90,24 @@ export function sysUser_listData(data) {
   })
 }
 
+// 用户管理删除
+export function sysUserdel(data) {
+  return request({
+    url: '/sys/sysUser_delete',
+    method: 'post',
+    params: data
+  })
+}
+
+// 重置用户密码
+export function sysReset(data) {
+  return request({
+    url: '/sys/sysUser_updateResetPd',
+    method: 'post',
+    params: data
+  })
+}
+
 // 角色列表
 export function sysRole_list(data) {
   return request({
@@ -99,10 +117,37 @@ export function sysRole_list(data) {
   })
 }
 
-// 用户管理添加删除
+// 用户管理添加修改
 export function sysUser_save(data) {
   return request({
     url: '/sys/sysUser_save',
+    method: 'post',
+    params: data
+  })
+}
+
+// 部门列表
+export function sysDept_list(data) {
+  return request({
+    url: '/sys/sysDept_listData',
+    method: 'post',
+    params: data
+  })
+}
+
+// 用户角色授权列表
+export function sysPower(data) {
+  return request({
+    url: '/sys/sysPower_initUserRoles',
+    method: 'post',
+    params: data
+  })
+}
+
+// 用户角色授权
+export function sysPower_save(data) {
+  return request({
+    url: '/sys/sysPower_saveUserRoles',
     method: 'post',
     params: data
   })
