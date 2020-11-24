@@ -3,7 +3,7 @@
     <div class="screen">
       <div>
         账号/姓名：
-        <el-input v-model="qhkeyword" placeholder="编号/内部编号" class="select" size="mini" />
+        <el-input v-model="qhkeyword" placeholder="用户账号" class="select" size="mini" />
 
         日期：
         <el-date-picker
@@ -85,19 +85,10 @@ export default {
       qhkeyword: '',
       bh: '',
       qyvalue: '',
-      start: 0,
-      query: {
-        access_token: localStorage.getItem('accessToken'),
-        start: this.start,
-        length: 20,
-        queryName: '',
-        starDate: '',
-        endDate: ''
-      }
+      start: 0
     }
   },
   created: function() {
-    // this.total = this.tableData.length
     this.handleCurrentChange()
     this.getlist()
   },
@@ -121,7 +112,7 @@ export default {
     },
     handleCurrentChange(val) {
       var that = this
-      that.query.start = (val - 1) * 20
+      that.start = (val - 1) * 20
       this.getlist(that.start)
     }
   }

@@ -1,8 +1,11 @@
 <template>
-  <div id="main" style="width: 100%;height:17rem;"></div>
+  <div id="main" style="width: 100%;height:17rem;" />
 </template>
 
 <script>
+import {
+  indexdata
+} from '@/api/globaldata'
 import echarts from 'echarts'
 import resize from './mixins/resize'
 
@@ -10,11 +13,13 @@ export default {
   mixins: [resize],
   data() {
     return {
-      chart: null
+      chart: null,
+      listType: [],
+      y1: []
     }
   },
   mounted() {
-    this.initChart()
+    this.getlist()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -24,71 +29,72 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart() {
+    getlist() {
       this.chart = echarts.init(document.getElementById('main'))
       this.chart.setOption({
-		  title: {
-		      text: '产品品类占比',
-          x:"center",
-          textStyle:{
-                  //文字颜色
-                  color:'gray',
-                  //字体风格,'normal','italic','oblique'
-                  fontStyle:'normal',
-                  //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                  fontWeight:'bold',
-                  //字体系列
-                  fontFamily:'sans-serif',
-                  //字体大小
-          　　　　 fontSize:16,
-
-              }
-		  },
-		  legend: {
-		      data: [{
-            name:'YLY1',
-            textStyle:{
-              color:'gray'
-            },
-
-          }, {
-            name:'脉冲控制仪',
-            textStyle:{
-               color:'gray'
-            },
-
-          },{
-            name:'砂石分离机',
-            textStyle:{
-              color:'gray'
-            },
-
-          },{
-            name:'云智能除尘',
-            textStyle:{
-               color:'gray'
-            },
-
-          }],
-			  bottom:0,
-
-		  },
-				series : [
-                    {
-                        name: '访问来源',
-                        type: 'pie',
-						minAngle: 5,
-						avoidLabelOverlap:true,
-                        radius: '60%',
-                        roseType: 'angle',
-                        data:[
-                            {value:350, name:'YLY1',  itemStyle: {  color:'#C3B6E6'}},
-                            {value:340, name:'脉冲控制仪',  itemStyle: {  color:'#FACFA9'}},
-                            {value:320, name:'砂石分离机',  itemStyle: {  color:'#71D4D4'}},
-                            {value:310, name:'云智能除尘',  itemStyle: {  color:'#A3D2F6'}}
-                        ],
-                    }
-                ]
+        title: {
+          text: '产品品类占比',
+          x: 'center',
+          textStyle: {
+            // 文字颜色
+            color: 'gray',
+            // 字体风格,'normal','italic','oblique'
+            fontStyle: 'normal',
+            // 字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+            fontWeight: 'bold',
+            // 字体系列
+            fontFamily: 'sans-serif',
+            // 字体大小
+            fontSize: 16
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a}</br>{b}:{c}({d}%)'
+        },
+        legend: {
+          // x: 'center',
+          // y: 'bottom',
+          // padding: [10, 0, 0, 0],
+          // icon: 'circle',
+          data: [],
+          bottom: 0
+        },
+        color: ['#C3B6E6', '#FACFA9', '#71D4D4', '#A3D2F6', '#75B6E4', '#90EC7D', '#46454A', '#F6A35F'],
+        series: [{
+          name: '占比情况',
+          type: 'pie',
+          minAngle: 5,
+          avoidLabelOverlap: true,
+          radius: '60%',
+          // roseType: 'angle',
+          data: []
+        }]
+      })
+      const query = {
+        access_token: localStorage.getItem('accessToken')
+      }
+      indexdata(query).then(res => {
+        var names = [] // 类别数组（用于存放饼图的类别）
+        var brower = []
+        const listType = res.data.listType
+        for (var i = 0; i < listType.length; i++) {
+          var obj = {}
+          var arr = []
+          obj.name = listType[i].xval
+          obj.value = listType[i].y1
+          arr.name = listType[i].xval
+          names[i] = obj
+          brower[i] = arr
+        }
+        this.chart.setOption({
+          legend: {
+            data: brower.value
+          },
+          series: [{
+            data: names
+          }]
+        })
       })
     }
   }

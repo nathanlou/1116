@@ -50,7 +50,7 @@
         </div>
         <div style="display: flex;width: 50%;">
           <div class="label">到期日期：</div>
-          <div style="margin-left: 0.9375rem;">{{ msg.dqrq }}</div>
+          <div style="margin-left: 0.9375rem;">{{ msg.yxrq }}</div>
         </div>
       </div>
       <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">
@@ -60,7 +60,7 @@
         </div>
         <div style="display: flex;width: 50%;">
           <div class="label">通讯时间：</div>
-          <div style="margin-left: 0.9375rem;">{{ msg.lastDateStr }}</div>
+          <div style="margin-left: 0.9375rem;">{{ msg.lastTime | dateFilter("yyyy-mm-dd hh:mm:ss") }}</div>
         </div>
       </div>
     </div>
@@ -97,14 +97,14 @@
           </div>
         </div>
       </div>
-      <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">
+      <!-- <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">
         <div style="display: flex;">
           <div class="label">参数设置：</div>
           <div style="margin-left: 0.9375rem;">
             <el-button type="success" round plain size="mini" @click="parameters()">参数设置</el-button>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="container_table">
       <div class="table_headr">操作记录</div>
@@ -217,6 +217,29 @@ import {
   parseTime
 } from '@/utils/index.js'
 export default {
+  filters: {
+    dateFilter: function(data, format = '') {
+      var dt = new Date(data)
+      var y = dt.getFullYear()
+      var m = (dt.getMonth() + 1).toString().padStart(2, '0')
+      var d = dt.getDate().toString().padStart(2, '0')
+      var h = dt.getHours().toString().padStart(2, '0')
+      var mm = dt.getMinutes().toString().padStart(2, '0')
+      var s = dt.getSeconds().toString().padStart(2, '0')
+      if (format.toLocaleLowerCase() === 'yyyy-mm-dd' ||
+                      format.toLocaleLowerCase() === '') {
+        return `${y}-${m}-${d}`
+      } else if (format.toLocaleLowerCase() === 'yyyy/mm/dd') {
+        return `${y}/${m}/${d}`
+      } else if (format.toLocaleLowerCase() === 'yyyy-mm-dd hh:mm:ss') {
+        return `${y}-${m}-${d} ${h}:${mm}:${s}`
+      } else if (format.toLocaleLowerCase() === 'yyyy/mm/dd hh:mm:ss') {
+        return `${y}/${m}/${d} ${h}:${mm}:${s}`
+      } else {
+        return `输入的时间格式有误`
+      }
+    }
+  },
   data() {
     return {
       deviceMoveNote: '',

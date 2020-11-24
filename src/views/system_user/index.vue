@@ -392,7 +392,7 @@ export default {
         userId: ''
       }
       sysPower(querys).then(res => {
-        this.roleId_list = res
+        this.roleId_list = res.data
       })
     },
     fpqxclick() {

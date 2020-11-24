@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: '环保设备管控平台',
+      title: '除尘设备全生命周期管控平台',
       logo: 'http://liaoweiji.hnqianhe.com/LOGOIMG/2c9ab0696df8a0b2016dfaac02e4004a.png'
     }
   }

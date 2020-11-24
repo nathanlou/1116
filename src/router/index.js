@@ -342,7 +342,7 @@ export const asyncRoutes = [{
     icon: 'list'
   },
   children: [{
-    path: 'equipment_list',
+    path: '/equipment_list',
     component: () => import('@/views/equipment_list/index'),
     name: '设备列表',
     meta: {
@@ -369,7 +369,7 @@ export const asyncRoutes = [{
     }
   },
   {
-    path: 'warning',
+    path: '/warning',
     component: () => import('@/views/warning/index'),
     name: '报警记录',
     meta: {

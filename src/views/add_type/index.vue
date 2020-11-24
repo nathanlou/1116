@@ -11,7 +11,7 @@
       :default-sort="{prop: 'date', order: 'descending'}"
       size="mini"
     >
-      <el-table-column prop="id" label="类型ID" align="center" />
+      <!-- <el-table-column prop="id" label="类型ID" align="center" /> -->
       <el-table-column prop="sblx" label="设备类型" align="center" />
       <el-table-column prop="sbxh" label="设备型号" align="center" />
       <el-table-column prop="sbxlh" label="设备识别号" align="center" />
