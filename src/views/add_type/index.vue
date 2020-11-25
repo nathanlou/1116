@@ -153,7 +153,7 @@ export default {
     },
     modify(index, row) {
       this.$router.push({
-        path: 'modify_type',
+        path: '/add_type/modify_type',
         query: {
           rowData: JSON.stringify(row)
         }
@@ -161,7 +161,7 @@ export default {
     },
     see(index, row) {
       this.$router.push({
-        path: 'parameter',
+        path: '/add_type/parameter',
         query: {
           id: row.id
         }

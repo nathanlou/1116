@@ -20,7 +20,7 @@
           <div slot="file" slot-scope="{file}">
             <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
             <span class="el-upload-list__item-actions">
-              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+              <span class="el-upload-list__item-preview" @click="(file)">
                 <i class="el-icon-zoom-in" />
               </span>
               <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file, fileList)">
@@ -50,6 +50,7 @@ import {
 export default {
   data() {
     return {
+      disabled: false,
       loading: false,
       form: {},
       rules: {
@@ -102,9 +103,7 @@ export default {
           this.loading = true
           addtype(query).then(res => {
             this.loading = false
-            this.$router.push({
-              path: 'add_type'
-            })
+            this.$router.go(-1)
           })
         } else {
           this.loading = false
