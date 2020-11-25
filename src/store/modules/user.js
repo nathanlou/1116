@@ -2,7 +2,8 @@ import {
   login,
   logout,
   getInfo,
-  QueryUserRole
+  QueryUserRole,
+  refresh_token
 } from '@/api/user'
 import {
   getToken,
@@ -24,7 +25,39 @@ const state = {
   introduction: '',
   roles: []
 }
+let refreshToken;
+const job = function(){
+    try {
+      //先清理
+      clearTimeout(refreshToken);
+    } catch (e) {
+      //TODO handle the exception
+      console.log("清理定时任务失败", refreshToken)
+    }
+    refresh_token({
+      refresh_token: sessionStorage.getItem('refreshToken'),
+      client_id: 'web',
+      client_secret: 'secret',
+      grant_type: 'refresh_token',
+      scope: 'all'
+    }).then(response => {
+      sessionStorage.setItem('accessToken', response.data.access_token)
+      sessionStorage.setItem('refreshToken', response.data.refresh_token)
+      jobRefreshToken(response.expires_in);
+    }).catch(error => {
+      reject(error)
+    })
 
+}
+//刷新token定时任务
+const jobRefreshToken = function(expires_in) {
+  if (!expires_in) {
+    console.log("刷新token失败")
+    return;
+  }
+  //下定时任务 定时刷新token
+  refreshToken = setTimeout(job, (expires_in - 10) *1000)
+};
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -68,6 +101,19 @@ const actions = {
         setToken(data.access_token);
         sessionStorage.setItem('role', data.token_type)
         localStorage.setItem('accessToken', data.access_token)
+
+        //记录刷新token的key
+        sessionStorage.setItem('refreshToken', data.refresh_token)
+        try {
+          //先清理
+          clearTimeout(refreshToken);
+        } catch (e) {
+          //TODO handle the exception
+          console.log("清理定时任务失败", refreshToken)
+        }
+        //再下任务
+        jobRefreshToken(data.expires_in)
+
         resolve()
       }).catch(error => {
         reject(error)
@@ -98,6 +144,15 @@ const actions = {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
+
+        try {
+          //先清理
+          clearTimeout(refreshToken);
+        } catch (e) {
+          //TODO handle the exception
+          console.log("清理定时任务失败", refreshToken)
+        }
+
         // resetRouter()
         sessionStorage.removeItem('role');
         localStorage.removeItem('accessToken');
@@ -159,5 +214,6 @@ export default {
   namespaced: true,
   state,
   mutations,
-  actions
+  actions,
+  refreshToken
 }

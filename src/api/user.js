@@ -33,3 +33,10 @@ export function QueryUserRole(token) {
     params: {'access_token': localStorage.getItem('accessToken')}
   })
 }
+export function refresh_token(data) {
+  return request({
+    url: '/oauth/token',
+    method: 'post',
+    params: data
+  })
+}
