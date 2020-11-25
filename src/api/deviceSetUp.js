@@ -17,3 +17,19 @@ export function deviceOpLogListData(data) {
     params:data
   })
 }
+//批量添加设备
+export function deviceInforSaveMore(data) {
+  return request({
+    url: '/sbgl/deviceInfor_saveMore',
+    method: 'post',
+    params:data
+  })
+}
+//设备类型详情查看
+export function deviceTypeGetDetail(data) {
+  return request({
+    url: '/sbgl/deviceType_getDetail',
+    method: 'post',
+    params:data
+  })
+}

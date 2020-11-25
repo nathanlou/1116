@@ -216,15 +216,17 @@ export default {
           this.loading = true
           const that = this
           equipment_add(that.ruleForm).then(res => {
-            this.loading = false
-            this.$message({
-              message: '添加设备成功',
-              type: 'success'
-            })
-            this.$router.push({
-              path: ''
-            })
-            this.goback()
+            if (res.status === 200) {
+              this.loading = false
+              this.$message({
+                message: '添加设备成功',
+                type: 'success'
+              })
+              this.$router.push({
+                path: ''
+              })
+              this.goback()
+            }
           })
             .catch(res => {
               this.loading = false

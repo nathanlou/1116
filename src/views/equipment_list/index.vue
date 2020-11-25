@@ -2,7 +2,6 @@
   <div class="titles">
     <div class="screen">
       企业：<el-select v-model="query.qCompanyId" placeholder="请选择" class="select" size="mini" width="10%">
-        <el-option label="全部" value="">全部</el-option>
         <el-option v-for="item in company_list" :key="item.value" :label="item.companyName" :value="item.id" />
       </el-select>
       关键字：
@@ -118,7 +117,6 @@ export default {
     }
   },
   created: function() {
-    this.query.qState = this.$route.query.status
     this.getlist()
     this.handleCurrentChange()
     var query = {
@@ -141,7 +139,7 @@ export default {
     set_up(index, row) {
       localStorage.setItem('id', row.id)
       this.$router.push({
-        path: 'set_up',
+        path: '/equipment_list/set_up',
         query: {
           key: localStorage.setItem('id', row.id)
         }
@@ -149,7 +147,7 @@ export default {
     },
     monitor(index, row) {
       this.$router.push({
-        path: 'monitor',
+        path: '/equipment_list/monitor',
         query: {
           rowData: row
         }

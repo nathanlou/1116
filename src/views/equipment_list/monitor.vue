@@ -1,20 +1,28 @@
 <template>
   <div>
     <div class="topcardbg_baseinfo">
-      <div style="display: flex;">
-        <div style="width: ;">
-          <img src="../../assets/img/shashifenliji.png" class="leftimg">
-        </div>
-        <div class="centerText">
+      <div style="display: flex;overflow-x: hidden;">
+        <div class="centerText" style="width: 30%;">
           <div><span>设备类型：</span><span>{{ rowData.sblx }}</span>
             <span v-if="rowData.deviceState == 1" class="bg_online">在线</span>
-            <span v-if="rowData.deviceState == 0" class="bg_unline">离线</span>
+            <span class="bg_unline">离线</span>
           </div>
           <div style="margin:0.9rem 0 ;"><span>所属企业：</span><span>{{ rowData.companyName ? rowData.companyName : "-" }}</span></div>
           <div><span>当前地址：</span><span>{{ rowData.rl ? rowData.rl : "-" }}</span></div>
         </div>
+        <div style="display: flex;width: 70%;overflow-x:scroll;overflow-y: hidden;" class="element">
+          <div>
+            <div v-for="(item,index) in imgList" :key="index" class="block">
+              <el-image
+                style="width: 100px;height: 100px;margin-left: 10px;"
+                :src="host + item.filePath"
+                fit="contain"
+                :preview-src-list="previewList"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-
       <div v-if="typeKey != 'modbus_xwz'" style="margin-left: 1.2rem;margin-top: 1rem;margin-right: 1rem;">
         <el-tabs type="border-card">
           <el-tab-pane label="基本信息">
@@ -107,7 +115,13 @@
                   <div class="label">{{ item.csmc }}</div>
                   <div style="padding-left: 0.9375rem;display: flex;width:calc(100% - 6rem)">
                     <div v-if="item.cd <= 1">
-                      <el-input v-model="deviceDataVals[item.jcqdz]" :placeholder="item.cd" size="small" class="inputW" @blur="resetValue(item)" />
+                      <el-input
+                        v-model="deviceDataVals[item.jcqdz]"
+                        :placeholder="item.cd"
+                        size="small"
+                        class="inputW"
+                        @blur="resetValue(item)"
+                      />
                     </div>
                     <div v-for="(itemv,indexv) in deviceDataVals[item.jcqdz]" v-else :key="indexv" :style="'padding-right:20px;width:'+(74/deviceDataVals[item.jcqdz].length)+'%;'">
                       <el-input v-model="deviceDataVals[item.jcqdz][indexv]" size="small" @blur="resetValue(item)" />
@@ -278,7 +292,6 @@
       </div>
 
     </div>
-
   </div>
 
 </template>
@@ -289,6 +302,9 @@ import {
   getDetailsByDeviceTypeId,
   deviceInforSetAddessVal
 } from '@/api/monitor'
+import {
+  deviceTypeGetDetail
+} from '@/api/deviceSetUp'
 
 import {
   jsons
@@ -298,6 +314,10 @@ export default {
 
   data() {
     return {
+      showBigImg: false,
+      host: process.env.VUE_APP_BASE_API,
+      imgList: [],
+      previewList: [],
       websock: null,
       // 标签对应表
       keyMapDetail: jsons,
@@ -321,9 +341,20 @@ export default {
     this.rowData = this.$route.query.rowData
     if (this.idKey) {
       // 发起soket
-      this.initWebSocket()
+      // this.initWebSocket()
       // 查询设备类型ID
       this.getTypeDetails()
+      deviceTypeGetDetail({
+        id: this.rowData.sblxId,
+        'access_token': localStorage.getItem('accessToken')
+      }).then(res => {
+        this.imgList = res.data.imgList
+        const tempList = []
+        for (const i in this.imgList) {
+          tempList.push(this.host + this.imgList[i].filePath)
+        }
+        this.previewList = tempList
+      })
     } else {
       this.$alert('无法获取设备信息', '提示', {
         confirmButtonText: '确定',
@@ -337,7 +368,7 @@ export default {
     resetValue(item) {
       const data = this.deviceDataVals[item.jcqdz]
       const paramData = item.cd > 1 ? data.join(',') : data
-
+      console.log(item.jcqdz)
       const param = {
         'address1': item.jcqdz,
         'length': item.cd,
@@ -346,6 +377,7 @@ export default {
         'typeId': this.rowData.sblxId,
         'access_token': localStorage.getItem('accessToken')
       }
+      console.log(param)
       deviceInforSetAddessVal(param).then(res => {
         if (res.status !== 200) {
           this.$alert('修改设备参数失败', '提示', {
@@ -396,6 +428,7 @@ export default {
             }
           }
           this.deviceDataList = res.data
+          console.log(this.deviceDataList)
         } else {
           // 小雾桩单独处理
 
@@ -423,6 +456,7 @@ export default {
           }
           this.xwzDeviceDataList = dataArr
         }
+        this.doSelect()
       })
     },
     doSelect() {
@@ -431,7 +465,14 @@ export default {
         'access_token': localStorage.getItem('accessToken')
       }
       readVal(query).then(res => {
-        console.log(res)
+        if (res.status === 200) {
+          for (var i in res.data) {
+            const item = res.data[i]
+            this.$set(this.deviceDataVals, item.jcqdz.toUpperCase(), item.cd > 1 ? item.vals.split(',') : item.vals)
+          }
+        } else {
+          this.$message.error('加载实时数据失败')
+        }
       })
     },
     threadPoxi() { // 实际调用的方法
@@ -468,8 +509,8 @@ export default {
         this.doSelect()
       } else {
         const redata = JSON.parse(e.data)
-        this.$set(this.deviceDataVals, redata.cont.jcqdz.toUpperCase(), redata.cont.cd > 1 ? redata.cont.vals.split(',')
-          : redata.cont.vals)
+        this.$set(this.deviceDataVals, redata.cont.jcqdz.toUpperCase(), redata.cont.cd > 1 ? redata.cont.vals.split(
+          ',') : redata.cont.vals)
       }
       console.log('soket:' + e.data)
       // const redata = JSON.parse(e.data)
@@ -501,118 +542,128 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-	.label {
-		width: 11.875rem;
-		text-align: center;
-		background-color: #E8F4FF;
-		color: gray;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
+<style >
+  .element::-webkit-scrollbar {
+    width: 0 !important
+  }
 
-	.label-xwz {
-		width: 11.875rem;
-		text-align: center;
-		background-color: #E8F4FF;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
+  .element {
+    -ms-overflow-style: none;
+  }
 
-	.topcardbg_baseinfo {
-		margin: 0 auto;
-		border-radius: 1rem;
-		background-color: white;
-		width: 96%;
-		height: 500px;
+  .element {
+    overflow: -moz-scrollbars-none;
+  }
 
-		margin-top: -0.5rem;
-	}
+  .label {
+    width: 11.875rem;
+    text-align: center;
+    background-color: #E8F4FF;
+    color: gray;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 
-	.msg_con {
-		width: 60%;
+  .label-xwz {
+    width: 11.875rem;
+    text-align: center;
+    background-color: #E8F4FF;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 
-		font-size: 1.0rem;
-		color: gray;
-		font-size: 0.9rem;
-	}
+  .topcardbg_baseinfo {
+    margin: 0 auto;
+    border-radius: 1rem;
+    background-color: white;
+    width: 96%;
+    margin-top: -0.5rem;
+  }
 
-	.leftimg {
-		padding: 0.3125rem;
-		width: 120px;
-		height: 90px;
-		margin-left: 1.2rem;
-		margin-top: 1.2rem;
-	}
+  .msg_con {
+    width: 60%;
 
-	.centerText {
-		width: 50%;
-		margin-top: 1.2rem;
-		margin-left: 1.2rem;
-		color: gray;
-	}
+    font-size: 1.0rem;
+    color: gray;
+    font-size: 0.9rem;
+  }
 
-	.bg_online {
-		background-color: #1890FF;
-		padding-top: 0.2rem;
-		padding-bottom: 0.2rem;
-		padding-left: 0.8rem;
-		padding-right: 0.8rem;
-		border-radius: 2rem;
-		color: white;
-		margin-left: 1.2rem;
-	}
+  .leftimg {
+    padding: 0.3125rem;
+    width: 120px;
+    height: 90px;
+    margin-left: 1.2rem;
+    margin-top: 1.2rem;
+  }
 
-	.bg_unline {
-		background-color: #ff0000;
-		padding-top: 0.2rem;
-		padding-bottom: 0.2rem;
-		padding-left: 0.8rem;
-		padding-right: 0.8rem;
-		border-radius: 2rem;
-		color: white;
-		margin-left: 1.2rem;
-	}
+  .centerText {
+    width: 50%;
+    margin-top: 1.2rem;
+    margin-left: 1.2rem;
+    color: gray;
+  }
 
-	.inputW {
-		width: 15rem;
-	}
+  .bg_online {
+    background-color: #1890FF;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+    border-radius: 2rem;
+    color: white;
+    margin-left: 1.2rem;
+  }
 
-	@media screen and (max-width: 1024px) {
-		.leftimg {
-			padding: 0.3125rem;
-			width: 6rem;
-			height: 5rem;
-			margin-left: 1.2rem;
-			margin-top: 1.2rem;
-		}
+  .bg_unline {
+    background-color: #ff0000;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+    border-radius: 2rem;
+    color: white;
+    margin-left: 1.2rem;
+  }
 
-		.centerText {
-			width: 50%;
-			margin-top: 1.5rem;
-			margin-left: 1.2rem;
-			font-size: 0.9rem;
-		}
+  .inputW {
+    width: 15rem;
+  }
 
-		.msg_con {
-			width: 80%;
+  @media screen and (max-width: 1024px) {
+    .leftimg {
+      padding: 0.3125rem;
+      width: 6rem;
+      height: 5rem;
+      margin-left: 1.2rem;
+      margin-top: 1.2rem;
+    }
 
-			font-size: 1.0rem;
-			color: gray;
-			font-size: 0.8rem;
-		}
+    .centerText {
+      width: 50%;
+      margin-top: 1.5rem;
+      margin-left: 1.2rem;
+      font-size: 0.9rem;
+    }
 
-		.label {
-			width: 6rem;
-			text-align: center;
-			background-color: #E8F4FF;
-		}
+    .msg_con {
+      width: 80%;
 
-		.inputW {
-			width: 10rem;
-		}
+      font-size: 1.0rem;
+      color: gray;
+      font-size: 0.8rem;
+    }
 
-	}
+    .label {
+      width: 6rem;
+      text-align: center;
+      background-color: #E8F4FF;
+    }
+
+    .inputW {
+      width: 10rem;
+    }
+
+  }
 </style>

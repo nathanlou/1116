@@ -26,7 +26,7 @@
       <el-input v-model="queryForm.queryNbbh" placeholder="内部编号" class="select" size="mini" />
       <span style="float: right;margin-right: 1.5%;">
         <el-button class="btn" type="primary" icon="el-icon-search" size="mini" round @click="getList">搜索</el-button>
-        <el-button class="btn" type="danger" icon="el-icon-delete" size="mini" round @click="deletes()">批量删除</el-button>
+        <!-- <el-button class="btn" type="danger" icon="el-icon-delete" size="mini" round @click="deletes()">批量删除</el-button> -->
       </span>
     </div>
     <div class="container_table">
@@ -162,9 +162,7 @@ export default {
       console.log(this.queryForm)
       deviceTransferListData(this.queryForm).then(res => {
         this.tableData = res.data
-        console.log('---------------------', this.tableData)
         this.total = res.recordsTotal
-        console.log(res.data)
       })
     },
     // 初始化查询表单

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios';
 import Cookies from 'js-cookie'
+import VueAMap from 'vue-amap'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
@@ -12,6 +13,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import permission from './directive/permission'
 
 import i18n from './lang' // internationalization
 import './icons' // icon
@@ -40,25 +42,26 @@ Vue.use(Element, {
   i18n: (key, value) => i18n.t(key, value)
 })
 
-const permission = {
-  inserted(el, binding, vnode) {
-    const { value } = binding
-    const roles = ['editor', 'admin']
-    if (value && value instanceof Array && value.length > 0) {
-      const permissionRoles = value
-      const hasPermission = roles.some(role => {
-        return permissionRoles.includes(role)
-      })
-      if (!hasPermission) {
-        el.parentNode && el.parentNode.removeChild(el)
-      }
-    } else {
-      throw new Error(`need roles! Like v-permission="['admin','editor']"`)
-    }
-  }
-}
 Vue.prototype.$http=axios
-Vue.directive('permission', permission)
+Vue.use(permission)
+
+Vue.use(VueAMap)
+VueAMap.initAMapApiLoader({
+  key:"da0f34fb505ee515066864b0bee3e814",
+  plugin:[
+    "AMap.Autocomplete", //输入提示插件
+        "AMap.PlaceSearch", //POI搜索插件
+        "AMap.Scale", //右下角缩略图插件 比例尺
+        "AMap.OverView", //地图鹰眼插件
+        "AMap.ToolBar", //地图工具条
+        "AMap.MapType", //类别切换控件，实现默认图层与卫星图、实施交通图层之间切换的控制
+        "AMap.PolyEditor", //编辑 折线多，边形
+        "AMap.CircleEditor", //圆形编辑器插件
+        "AMap.Geolocation" //定位控件，用来获取和展示用户主机所在的经纬度位置
+        ],
+  v:'1.4.4'
+})
+
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

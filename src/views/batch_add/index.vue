@@ -1,77 +1,64 @@
 <template>
   <div style="width: 95%;margin-left: 2%;color: gray;font-size: 0.8rem;" class="container">
 
-    	<div class="screen"   >
-    	<span> 企业：</span>
-    	 <el-select v-model="company_value" placeholder="请选择" class="select" size="mini" >
-    	   <el-option v-for="item in company_list" :key="item.value" :label="item.label" :value="item.value" />
-    	 </el-select>
-    	 <span>类型：</span>
-    	  <el-select v-model="style_value" placeholder="请选择" class="select" size="mini">
-    	    <el-option v-for="item in style_list" :key="item.value" :label="item.label" :value="item.value" />
-    	  </el-select>
-    	<span>型号：</span>
-    	<el-select v-model="xh_value" placeholder="请选择" class="select" size="mini">
-    	  <el-option v-for="item in xh_list" :key="item.value" :label="item.label" :value="item.value" />
-    	</el-select>
-    		<span style="float: right;padding: 1%;">
-          <el-button  type="primary" size="mini" @click="add20()" round>增加20行</el-button>
-    			<el-button  type="success" size="mini" round @click="zz(0)">设备编号自增</el-button>
-    			<el-button  type="warning" size="mini" round @click="zz(1)">内部编号自增</el-button>
-    			<el-button  type="danger"  size="mini" round @click="zz(2)">SIM卡号自增</el-button>
-    		</span>
-        <div style="clear: both;"></div>
-    	</div>
-
+    <div class="screen">
+      <span> 企业：</span>
+      <el-select v-model="company_value" placeholder="请选择" class="select" size="mini">
+        <el-option v-for="item in company_list" :key="item.id" :label="item.companyName" :value="item.id" />
+      </el-select>
+      <span>类型：</span>
+      <el-select v-model="style_value" placeholder="请选择" class="select" size="mini">
+        <el-option v-for="item in style_list" :key="item.id" :label="item.sblx" :value="item.id" />
+      </el-select>
+      <span>型号：</span>
+      <el-select v-model="xh_value" placeholder="请选择" class="select" size="mini">
+        <el-option v-for="item in xh_list" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <span style="float: right;padding: 1%;">
+        <el-button type="primary" size="mini" round @click="add20()">增加20行</el-button>
+        <el-button type="success" size="mini" round @click="zz(0)">设备编号自增</el-button>
+        <el-button type="warning" size="mini" round @click="zz(1)">内部编号自增</el-button>
+        <el-button type="danger" size="mini" round @click="zz(2)">SIM卡号自增</el-button>
+      </span>
+      <div style="clear: both;" />
+    </div>
 
     <div id="example" class="noScroll-y col-xs-12" />
     <div style="color: red;margin-top: 1%;margin-bottom: 1%;">
       注意：带*号为必填项,相同项可以通过复制，或者下拉边框进行填充。
     </div>
     <div style="width: 100%;text-align: center;margin-top: 2%;margin-bottom: 2%;">
-      <el-button class="btns" type="primary" size="medium">添加设备</el-button>
+      <el-button class="btns" type="primary" size="medium" @click="submit">添加设备</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  HotTable
-} from '@handsontable-pro/vue'
 import 'handsontable-pro/dist/handsontable.full.css'
 import Handsontable from 'handsontable-pro'
+import {
+  company_listData,
+  deviceType_listData
+} from '@/api/getlist'
+
+import {
+  deviceInforSaveMore
+} from '@/api/deviceSetUp'
+
 export default {
   data() {
     return {
       company_value: '',
       style_value: '',
       xh_value: '',
-      company_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: '潜合测试'
-      }, {
-        value: '选项2',
-        label: '客户体验'
-      }],
-      style_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: 'YLY1'
-      }, {
-        value: '选项2',
-        label: '智能除尘'
-      }],
+      company_list: [],
+      style_list: [],
       xh_list: [
         {
-          value: '选项1',
+          value: '1',
           label: '1型'
         }, {
-          value: '选项2',
+          value: '2',
           label: '2型'
         }
       ],
@@ -86,7 +73,75 @@ export default {
   mounted() {
     this.saveData()
   },
+  created() {
+    var query = {
+      access_token: localStorage.getItem('accessToken'),
+      start: 0,
+      length: '2000'
+    }
+    company_listData(query).then(res => {
+      this.company_list = res.data
+    })
+    deviceType_listData(query).then(res => {
+      this.style_list = res.data
+    })
+  },
   methods: {
+    // 保存数据
+    submit() {
+      if (!this.company_value) {
+        this.$message.warning('请选择企业')
+        return
+      }
+      if (!this.style_value) {
+        this.$message.warning('请选择设备类型')
+        return
+      }
+      const rows = this.hot.getData()
+      const dataArry = []
+      // 数组 ['设备类型ID','编号(*)'，"内部编号(*)","SIM卡号(*)","设备地址","工地名称","安装日期","续费到期日期","工地负责人","手机号"]
+      for (const i in rows) {
+        let hasData = false
+        for (const n in rows[i]) {
+          // 如果一行里已经有了数据
+          if (rows[i][n]) {
+            hasData = true
+          }
+          if (hasData && !rows[i][n]) {
+            const r = i * 1 + 1
+            const l = n * 1 + 1
+            this.$message.warning('第' + r + '行第' + l + '列数据异常')
+            return
+          }
+          if (hasData && !rows[i][0]) {
+            const r = i * 1 + 1
+            this.$message.warning('第' + r + '行第1列数据异常')
+            return
+          }
+        }
+        if (!hasData) {
+          continue
+        }
+        const rowArr = [this.style_value, rows[i][0], rows[i][1], rows[i][2], rows[i][3], rows[i][4], rows[i][5], rows[i][6], rows[i][7], rows[i][8]]
+        dataArry.push(rowArr)
+      }
+      if (dataArry.length === 0) {
+        this.$message.warning('未输入任何设备信息')
+        return
+      }
+      deviceInforSaveMore({
+        'access_token': localStorage.getItem('accessToken'),
+        'companyId': this.company_value,
+        'dataArry': { data: dataArry }
+      }).then(res => {
+        if (res.status === 200) {
+          this.$message.warning('成功添加' + dataArry.length + '条记录')
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 1000)
+        }
+      })
+    },
     add20() {
       var c = this.hot.countRows()
       if (c < 200) {
@@ -95,77 +150,74 @@ export default {
         alert('您插入的已经超过200行，200行以上会影响性能，建议分批插入。')
       }
     },
-    getMaxRow(rows,col){
-       var pos = {r:-1,v:0};
-      for(var i=0;i<rows;i++){
-       var a = this.hot.getDataAtCell(i,col);
-       if(a!=null&&a!=""){
-        pos.r = i;
-        pos.v=a;
-        continue;
-       }else{
-        return pos;
-       }
-      }
-      return pos;
-     },
-     isRealNum(val){
-       var val = val.toString();
-       var len = val.length;
-       var res = {pos:0,tv:0};
-       for(var i=len-1;i>=0;i--){
-        var temp = val.substring(i,len);
-        if(this.isNum(temp)){
-         res.tv = parseInt(temp);
-         res.pos = i;
-         continue;
-        }else{
-         return res;
+    getMaxRow(rows, col) {
+      var pos = { r: -1, v: 0 }
+      for (var i = 0; i < rows; i++) {
+        var a = this.hot.getDataAtCell(i, col)
+        if (a !== null && a !== '') {
+          pos.r = i
+          pos.v = a
+          continue
+        } else {
+          return pos
         }
-       }
-       res.pos = len-res.pos;
-       return res;
-     },
-     isNum(val){
-        if(val === "" || val ==null){
-             return false;
-     　　}
-        if(!isNaN(val)){　　　　
-     　　　 return true;
-     　　}
-     　else{
-     　　　　return false;
-     　　}
-     },
-     zz(index){
-      var allLenth = this.hot.countRows();
-      var col = index;
-      var currentPos = this.getMaxRow(allLenth,col)
-      console.log(allLenth)
-      var cur_row=currentPos.r;
-      var cur_val=currentPos.v;
-      if(cur_row==-1){
-       alert('"提示","递增第一行不能为空，且后半部分为数字"')
-       return;
       }
-      var alyObj = this.isRealNum(cur_val);
-      var v = alyObj.tv;
-      for(var i=cur_row+1;i<=cur_row+20;i++){
-       ++v;
-       if(cur_row>allLenth){
-        break;
-       }
-       var iv = v.toString();
-       var str = "";
-       if(alyObj.pos==cur_val.toString().length){
-        this.hot.setDataAtCell(i,col,v);
-       }else{
-        var s= formatZero(v,cur_val.toString().length-alyObj.pos)
-        s = cur_val.substring(0,alyObj.pos) + s;
-        this.hot.setDataAtCell(i,col,s);
-       }
+      return pos
+    },
+    isRealNum(val) {
+      val = val.toString()
+      const len = val.length
+      const res = { pos: 0, tv: 0, zm: '' }
+      for (let i = len - 1; i >= 0; i--) {
+        const temp = val.substring(i, len)
+        if (this.isNum(temp)) {
+          res.tv = parseInt(temp)
+          res.pos = i
+          res.zm = val.substring(0, i)
+          continue
+        } else {
+          return res
+        }
       }
-     },
+      res.pos = len - res.pos
+      return res
+    },
+    isNum(val) {
+      if (val === '' || val == null) {
+        return false
+      }
+      if (!isNaN(val)) {
+        return true
+      } else {
+        return false
+      }
+    },
+    zz(index) {
+      var allLenth = this.hot.countRows()
+      var col = index
+      var currentPos = this.getMaxRow(allLenth, col)
+      var cur_row = currentPos.r
+      var cur_val = currentPos.v
+      if (cur_row === -1) {
+        alert('"提示","递增第一行不能为空，且后半部分为数字"')
+        return
+      }
+      var alyObj = this.isRealNum(cur_val)
+      let v = alyObj.tv
+      for (var i = cur_row + 1; i <= cur_row + 20; i++) {
+        ++v
+        if (cur_row > allLenth) {
+          break
+        }
+        const iv = alyObj.zm + v.toString()
+        if (iv.length === cur_val.toString().length) {
+          this.hot.setDataAtCell(i, col, iv)
+        } else {
+          const z = new Array(cur_val.toString().length - v.toString().length - alyObj.zm.length).fill(0)
+          this.hot.setDataAtCell(i, col, alyObj.zm + z.join('') + v.toString())
+        }
+      }
+    },
     saveData() {
       var myData = Handsontable.helper.createSpreadsheetData(20)
       var container = document.getElementById('example')
@@ -233,13 +285,13 @@ export default {
           var that = this
           var rowAr = []
 
-          for (var i = 0; i < that.countRows(); i++) {
+          for (let i = 0; i < that.countRows(); i++) {
             rowAr.push(that.getRowHeight(i) || 23)
           }
           rowAr[index] = rowAr.splice(index + 1, 1, rowAr[index])[0]
 
           var $moveArr = that.getPlugin('ManualRowMove').rowsMapper.__arrayMap
-          for (var i = 0; i < $moveArr.length; i++) {
+          for (let i = 0; i < $moveArr.length; i++) {
             if ($moveArr[i] >= index) {
               $moveArr[i] += 1
             }
@@ -264,14 +316,14 @@ export default {
           var r = that.getPlugin('ManualRowResize')
           rowAr.splice(index, 1)
           var $moveArr = that.getPlugin('ManualRowMove').rowsMapper.__arrayMap
-          for (var i = 0; i < $moveArr.length; i++) {
+          for (let i = 0; i < $moveArr.length; i++) {
             if ($moveArr[i] > $moveArr[index]) {
               $moveArr[i] -= 1
             }
           }
           $moveArr.splice(index, 1)
 
-          for (var i = 0; i < rowAr.length; i++) {
+          for (let i = 0; i < rowAr.length; i++) {
             r.setManualSize(i, rowAr[i])
           }
           that.updateSettings({
@@ -282,13 +334,13 @@ export default {
           var that = this
           var colAr = []
 
-          for (var i = 0; i < that.countCols(); i++) {
+          for (let i = 0; i < that.countCols(); i++) {
             colAr.push(that.getColWidth(i) || 50)
           }
           colAr[index] = colAr.splice(index + 1, 1, colAr[index])[0]
 
           var $moveArr = that.getPlugin('ManualColumnMove').columnsMapper.__arrayMap
-          for (var i = 0; i < $moveArr.length; i++) {
+          for (let i = 0; i < $moveArr.length; i++) {
             if ($moveArr[i] >= index) {
               $moveArr[i] += 1
             }
@@ -307,13 +359,13 @@ export default {
           var that = this
           var colAr = []
 
-          for (var i = 0; i <= that.countCols(); i++) {
+          for (let i = 0; i <= that.countCols(); i++) {
             colAr.push(that.getColWidth(i) || 50)
           }
 
           colAr.splice(index, 1)
           var $moveArr = that.getPlugin('ManualColumnMove').columnsMapper.__arrayMap
-          for (var i = 0; i < $moveArr.length; i++) {
+          for (let i = 0; i < $moveArr.length; i++) {
             if ($moveArr[i] > $moveArr[index]) {
               $moveArr[i] -= 1
             }
@@ -356,7 +408,7 @@ export default {
           for (var j = 0; j < rowAr.length; j++) {
             r.setManualSize(j, rowAr[j])
           }
-          tableRender(that)
+          this.tableRender(that)
         },
         beforeColMove: function(cols, target) {
           var that = this
@@ -381,14 +433,14 @@ export default {
         afterColMove: function(cols, target) {
           var that = this
           var colAr = []
-          var $move = that.getPlugin('ManualColumnMove')
+          // var $move = that.getPlugin('ManualColumnMove')
           colAr = that.getSettings().rowHeights.concat()
 
           var r = that.getPlugin('ManualColumnResize')
           for (var j = 0; j < colAr.length; j++) {
             r.setManualSize(j, colAr[j])
           }
-          tableRender(that)
+          this.tableRender(that)
         }
       })
     },

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //监听接口
 export function readVal(data) {
   return request({
-    url: '/sbgl/deviceInfor_readVal',
+    url: '/sbgl/deviceInfor_readVal2',
     method: 'post',
     params:data
   })
