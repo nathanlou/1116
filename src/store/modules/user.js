@@ -26,7 +26,9 @@ const state = {
   roles: []
 }
 let refreshToken;
-const job = function(){
+
+function job(){
+  debugger;
     try {
       //先清理
       clearTimeout(refreshToken);
@@ -43,12 +45,13 @@ const job = function(){
     }).then(response => {
       sessionStorage.setItem('accessToken', response.data.access_token)
       sessionStorage.setItem('refreshToken', response.data.refresh_token)
-      jobRefreshToken(response.expires_in);
+      jobRefreshToken(response.data.expires_in);
     }).catch(error => {
       reject(error)
     })
 
 }
+
 //刷新token定时任务
 const jobRefreshToken = function(expires_in) {
   if (!expires_in) {
@@ -56,7 +59,13 @@ const jobRefreshToken = function(expires_in) {
     return;
   }
   //下定时任务 定时刷新token
-  refreshToken = setTimeout(job, (expires_in - 10) *1000)
+  let time = (expires_in - 10) *1000;
+  if(time > 1728000000 ){
+    time = 1728000000;
+  }
+  refreshToken = setTimeout(function(){
+    job();
+  }, time )
 };
 const mutations = {
   SET_TOKEN: (state, token) => {
