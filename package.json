@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@handsontable-pro/vue": "^3.1.1",
+    "@handsontable/vue": "^5.1.0",
     "axios": "0.18.1",
     "clipboard": "2.0.4",
     "codemirror": "5.45.0",

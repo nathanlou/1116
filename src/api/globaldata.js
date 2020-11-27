@@ -7,3 +7,12 @@ export function indexdata(data) {
     params: data
   })
 }
+
+// 首页地图
+export function statMap(data) {
+  return request({
+    url: '/index/index_statMapData',
+    method: 'post',
+    params: data
+  })
+}

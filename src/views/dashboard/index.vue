@@ -7,7 +7,7 @@
           <img src="../../assets/img/device.png">
         </div>
         <div class="right_text">
-          <div class="title">总监控设备</div>
+          <div class="title">总设备数量</div>
           <div class="num">{{ overviews.all }}</div>
         </div>
       </div>
@@ -18,6 +18,15 @@
         <div class="right_text">
           <div class="title">在线设备</div>
           <div class="num">{{ overviews.online }}</div>
+        </div>
+      </div>
+      <div class="overview" @click="all('online')">
+        <div class="left_img">
+          <img src="../../assets/img/in_use.png">
+        </div>
+        <div class="right_text">
+          <div class="title">在用设备</div>
+          <div class="num">0</div>
         </div>
       </div>
       <div class="overview" @click="all('offline')">
@@ -38,7 +47,7 @@
           <div class="num">{{ overviews.todayAlarm }}</div>
         </div>
       </div>
-      <div class="overview">
+      <!-- <div class="overview">
         <div class="left_img">
           <img src="../../assets/img/time.png">
         </div>
@@ -46,7 +55,7 @@
           <div class="title">累计运行时间</div>
           <div class="num">{{ overviews.sumRunTime }}</div>
         </div>
-      </div>
+      </div> -->
     </div>
     <!-- 总览版块开始 -->
     <!-- 设备运行统计图开始 -->
@@ -63,6 +72,7 @@
       box-shadow: 5px 3px 5px 0px rgba(100,94,94,0.15);
        border-radius: 0.6rem;
       "
+        @click="map"
       >
         <Keyboard />
       </div>
@@ -169,6 +179,11 @@ export default {
     warning() {
       this.$router.push({
         path: '/warning'
+      })
+    },
+    map() {
+      this.$router.push({
+        path: '/statistics'
       })
     }
   }

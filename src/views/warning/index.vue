@@ -91,8 +91,6 @@
 
 <script>
 import {
-  equipment_del,
-  equipment_msg,
   alarm,
   alarmtype
 } from '@/api/getlist'

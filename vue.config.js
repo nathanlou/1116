@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || '除尘设备全生命周期管控平台' // page title
+const name = defaultSettings.title || '设备全生命周期管控平台' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.

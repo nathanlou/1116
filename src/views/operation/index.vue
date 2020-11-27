@@ -185,7 +185,7 @@ export default {
             access_token: localStorage.getItem('accessToken'),
             ids: arr.join(',')
           }).then(function(response) {
-            if (response.data.code == 200) {
+            if (response.data.code === 200) {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
