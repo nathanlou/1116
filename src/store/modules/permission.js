@@ -157,6 +157,14 @@ const actions = {
               "icon": "#"
             },
             component: () => import('@/views/add_type/parameter')
+          }, {
+            path: '/notice',
+            name: '消息',
+            meta: {
+              "title": '消息',
+              "icon": "#"
+            },
+            component: () => import('@/views/notice/index')
           }
           ]
         })
