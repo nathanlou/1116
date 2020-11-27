@@ -65,7 +65,7 @@
           <template slot-scope="scope">
             <el-button class="btn btn_do" type="success" size="mini" round plain @click="monitor(scope.$index, scope.row)">监控</el-button>
             <el-button class="btn btn_do" type="warning" size="mini" round plain @click="set_up(scope.$index, scope.row)">设置</el-button>
-            <el-button class="btn btn_do" type="danger" size="mini" round plain>二维码</el-button>
+            <el-button class="btn btn_do" type="danger" size="mini" round plain @click="getQrcode(scope.row.id)">二维码</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,15 +78,29 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <!-- 二维码弹窗 -->
+    <el-dialog title="设备二维码" :visible.sync="showQrcodePath" width="30%">
+      <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;align-content: center;">
+        <el-image style="width: 400px;height: 400px;" :src="host + qrCodePath" fit="contain" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { equipment_list /* equipment_del */, company_listData } from '@/api/getlist'
-// import { getToken, setToken, removeToken } from '@/utils/auth'
+import {
+  equipment_list /* equipment_del */,
+  company_listData
+} from '@/api/getlist'
+import {
+  deviceInforGetEwm
+} from '@/api/deviceSetUp.js'
 export default {
   data() {
     return {
+      host: process.env.VUE_APP_BASE_API,
+      qrCodePath: '',
+      showQrcodePath: false,
       total: 0, // 默认数据总数
       pagesize: 20, // 每页的数据条数
       currentPage: 1, // 默认开始页面
@@ -135,6 +149,21 @@ export default {
         this.tableData = res.data
         this.total = res.recordsTotal
       })
+    },
+    getQrcode(id) {
+      if (id) {
+        console.log(id)
+        const query = {
+          access_token: localStorage.getItem('accessToken'),
+          id: id
+        }
+        deviceInforGetEwm(query).then(res => {
+          if (res.status === 200) {
+            this.qrCodePath = res.data
+            this.showQrcodePath = true
+          }
+        })
+      }
     },
     set_up(index, row) {
       localStorage.setItem('id', row.id)

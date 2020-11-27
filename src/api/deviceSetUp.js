@@ -33,3 +33,19 @@ export function deviceTypeGetDetail(data) {
     params:data
   })
 }
+//获取设备二维码
+export function deviceInforGetEwm(data) {
+  return request({
+    url: '/sbgl/deviceInfor_getEwm',
+    method: 'post',
+    params:data
+  })
+}
+//批量删除操作日志
+export function deviceOpLogDeleteAll(data) {
+  return request({
+    url: '/sbgl/deviceOpLog_deleteAll',
+    method: 'post',
+    params:data
+  })
+}
