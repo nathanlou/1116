@@ -20,7 +20,7 @@
           :default-time="['12:00:00']"
         />
         <span class="searchText" style="margin-left: 1.25rem;margin-right: 5px;">按设备数排序：</span>
-        <el-select v-model="pcsearchenterPriseInfo.sort" placeholder="请选择" style="width: 100px;">
+        <el-select v-model="pcsearchenterPriseInfo.queryOrder" placeholder="请选择" style="width: 100px;">
           <el-option v-for="item in optionsN" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
 
@@ -104,7 +104,7 @@
         </div>
         <div style="margin: 0.625rem;">
           <span class="searchText" style="">按设备数排序：</span>
-          <el-select v-model="minisearchenterPriseInfo.sort" placeholder="请选择" style="width: 42%;">
+          <el-select v-model="minisearchenterPriseInfo.queryOrder" placeholder="请选择" style="width: 42%;">
             <el-option v-for="item in optionsN" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </div>
@@ -203,10 +203,10 @@ export default {
         label: '否'
       }],
       optionsN: [{
-        value: '顺序',
+        value: 'asc',
         label: '顺序'
       }, {
-        value: '倒序',
+        value: 'desc',
         label: '倒序'
       }],
       screenWidth: '',
@@ -236,7 +236,7 @@ export default {
         phone: '',
         isUser: '',
         time: '',
-        sort: ''
+        queryOrder: ''// 顺序
       },
       minisearchenterPriseInfo: {
         name: '',
@@ -313,7 +313,8 @@ export default {
         access_token: localStorage.getItem('accessToken'),
         start: this.currentPage - 1,
         length: this.pageSize,
-        queryName: this.pcsearchenterPriseInfo.name
+        queryName: this.pcsearchenterPriseInfo.name,
+        queryOrder: this.pcsearchenterPriseInfo.queryOrder
       }
       company_list(query).then(res => {
         this.companys = res.data

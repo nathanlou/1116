@@ -63,6 +63,9 @@ const jobRefreshToken = function(expires_in) {
   if(time > 1728000000 ){
     time = 1728000000;
   }
+  if(time < 0){
+    time = 10000;
+  }
   refreshToken = setTimeout(function(){
     job();
   }, time )
