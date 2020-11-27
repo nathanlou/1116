@@ -49,7 +49,6 @@
         <el-table-column label="用户名" align="center" prop="userName" />
         <el-table-column align="center" label="企业名称" prop="companyName" />
         <el-table-column align="center" label="是否启用" prop="isEnable">
-
           <template slot-scope="scope">
             <span>{{ scope.row.isEnable == 1 ? '启用' :'停用' }}</span>
           </template>

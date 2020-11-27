@@ -49,3 +49,12 @@ export function deviceOpLogDeleteAll(data) {
     params: data
   })
 }
+
+// 批量删除操作日志
+export function deviceInforDeleteAll(data) {
+  return request({
+    url: '/sbgl/deviceInfor_deleteAll',
+    method: 'post',
+    params: data
+  })
+}

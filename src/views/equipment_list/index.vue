@@ -95,7 +95,8 @@ import {
   company_listData
 } from '@/api/getlist'
 import {
-  deviceInforGetEwm
+  deviceInforGetEwm,
+  deviceInforDeleteAll
 } from '@/api/deviceSetUp.js'
 export default {
   data() {
@@ -206,17 +207,30 @@ export default {
         })
       } else {
         data.forEach(function(item) {
-          arr.push(item.bh)
+          arr.push(item.id)
         })
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除这些设备, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          deviceInforDeleteAll({
+            access_token: localStorage.getItem('accessToken'),
+            ids: arr.join(',')
           })
+            .then(response => {
+              if (response.status === 200) {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+                this.currentPage = 1
+                this.getlist()
+              }
+            })
+            .catch(function(error) {
+              console.log(error)
+            })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -224,16 +238,6 @@ export default {
           })
         })
       }
-
-      // 				request.delete(apis.manageModel, arr)
-      // 					.then(function(response) {
-      // 						if (response.data.code == 200) {
-      //
-      // 						}
-      // 					})
-      // 					.catch(function(error) {
-      // 						console.log(error);
-      // 					});
     }
   }
 }

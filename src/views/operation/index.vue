@@ -184,8 +184,8 @@ export default {
           deviceOpLogDeleteAll({
             access_token: localStorage.getItem('accessToken'),
             ids: arr.join(',')
-          }).then(function(response) {
-            if (response.data.code === 200) {
+          }).then(response => {
+            if (response.status === 200) {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
