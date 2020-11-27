@@ -29,10 +29,10 @@
                 <span>{{ props.row.companyName ? props.row.companyName : '-' }}</span>
               </el-form-item>
               <el-form-item label="权限管理">
-                <span>{{ props.row.manageType ? props.row.manageType : '-' }}</span>
+                <span>{{ props.row.manageType ? (props.row.manageType == 1 ? '管理员' : props.row.manageType == 2 ? '送料员' : '超级管理员' ) : '-' }}</span>
               </el-form-item>
               <el-form-item label="是否启用">
-                <span>{{ props.row.isEnable ? props.row.isEnable : '-' }}</span>
+                <span>{{ props.row.isEnable ? (props.row.isEnable == 1 ? '启用' : '停用') : '-' }}</span>
               </el-form-item>
               <el-form-item label="联 系 人">
                 <span>{{ props.row.name ? props.row.name : '-' }}</span>

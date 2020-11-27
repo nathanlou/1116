@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
+        <img v-if="logo" src="@/assets/img/logo.png" class="sidebar-logo">
         <h1 v-else class="sidebar-title">{{ title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: '设备全生命周期管控平台',
-      logo: 'http://abzn.hnqianhe.com/level/img/favicon.ico'
+      logo: '@/assets/img/logo.png'
     }
   }
 }
