@@ -67,7 +67,7 @@ export function msgCont_listSend(data) {
   })
 }
 
-// 删除通告信息
+// 信息类型
 export function msgType_listData(data) {
   return request({
     url: '/msg/msgType_listData',
@@ -80,6 +80,33 @@ export function msgType_listData(data) {
 export function msgCont_delete(data) {
   return request({
     url: '/msg/msgCont_delete',
+    method: 'post',
+    params: data
+  })
+}
+
+// 获取未读
+export function Unread(data) {
+  return request({
+    url: '/msg/msgReceive_getNoReadCount',
+    method: 'post',
+    params: data
+  })
+}
+
+// 用户接收消息列表
+export function msgReceive_listData(data) {
+  return request({
+    url: '/msg/msgReceive_listData',
+    method: 'post',
+    params: data
+  })
+}
+
+// 消息查看
+export function msgReceive_getDetail(data) {
+  return request({
+    url: '/msg/msgReceive_getDetail',
     method: 'post',
     params: data
   })

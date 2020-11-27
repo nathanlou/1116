@@ -2,6 +2,7 @@
   <div class="titles">
     <div class="screen">
       企业：<el-select v-model="query.qCompanyId" placeholder="请选择" class="select" size="mini" width="10%">
+        <el-option key="" label="全部" value="" />
         <el-option v-for="item in company_list" :key="item.value" :label="item.companyName" :value="item.id" />
       </el-select>
       关键字：
@@ -51,7 +52,7 @@
             </div>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="isEnable" label="开机状态" align="center">
+        <el-table-column prop="isEnable" label="开机状态" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.isEnable==1" style="color:green;">
               开机
@@ -60,7 +61,8 @@
               关机
             </div>
           </template>
-        </el-table-column> -->
+        </el-table-column>
+        <el-table-column prop="version" label="软件版本" align="center" width="80" size="mini" />
         <el-table-column label="操作" width="280" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button class="btn btn_do" type="success" size="mini" round plain @click="monitor(scope.$index, scope.row)">监控</el-button>
@@ -131,6 +133,7 @@ export default {
     }
   },
   created: function() {
+    this.query.qState = this.$route.query.status
     this.getlist()
     this.handleCurrentChange()
     var query = {
@@ -152,7 +155,6 @@ export default {
     },
     getQrcode(id) {
       if (id) {
-        console.log(id)
         const query = {
           access_token: localStorage.getItem('accessToken'),
           id: id

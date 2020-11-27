@@ -12,7 +12,7 @@
 
         <div class="title-container">
           <h3 class="title">
-            除尘设备全生命周期管控平台
+            设备全生命周期管控平台
           </h3>
           <lang-select class="set-language" />
         </div>

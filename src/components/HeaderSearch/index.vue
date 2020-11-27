@@ -6,6 +6,9 @@
 </template>
 
 <script>
+import {
+  Unread
+} from '@/api/companyUser'
 // fuse is a lightweight fuzzy-search module
 // make search results more in line with expectations
 // import Fuse from 'fuse.js'
@@ -21,28 +24,37 @@ export default {
   // },
   data() {
     return {
-      value: 0,
+      value: '',
       show: true
     }
   },
-  computed: {
-  },
-  mounted() {
-
+  created() {
+    this.getmsg()
   },
   methods: {
     click() {
-      this.$router.push({ path: '/notice' })
+      this.$router.push({
+        path: '/notice'
+      })
+    },
+    getmsg() {
+      var query = {
+        access_token: localStorage.getItem('accessToken')
+      }
+      Unread(query).then(res => {
+        this.value = res.data
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-	.item{
+	.item {
 		position: absolute;
-		right: 7.1875rem;
+		right: 8.7rem;
 	}
+
 	.header-search {
 		font-size: 0 !important;
 

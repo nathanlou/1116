@@ -67,11 +67,7 @@
     <div style="width: 98%;margin-left: 1%;display: flex;margin-top: 0.5rem;">
       <!-- 地图开始 -->
       <div
-        style="width: 34%;background-color: white;
-      padding: 1%;margin-bottom: 1%;
-      box-shadow: 5px 3px 5px 0px rgba(100,94,94,0.15);
-       border-radius: 0.6rem;
-      "
+        style="width: 34%;background-color: white;padding: 1%;margin-bottom: 1%;box-shadow: 5px 3px 5px 0px rgba(100,94,94,0.15);border-radius: 0.6rem;"
         @click="map"
       >
         <Keyboard />
@@ -83,6 +79,7 @@
       margin-left: 1%;box-shadow: 5px 3px 5px 0px rgba(100,94,94,0.15);
        border-radius: 0.6rem;
       "
+        @click="pie"
       >
         <LineMarker />
       </div>
@@ -184,6 +181,11 @@ export default {
     map() {
       this.$router.push({
         path: '/statistics'
+      })
+    },
+    pie() {
+      this.$router.push({
+        path: '/data_statistics'
       })
     }
   }

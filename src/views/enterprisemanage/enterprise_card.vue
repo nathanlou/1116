@@ -171,8 +171,8 @@
         </el-row>
       </el-form>
     </el-dialog>
-  </div>
-  </el-dialog>
+    <!-- </div>
+	</el-dialog> -->
 
   </div>
 </template>
@@ -303,7 +303,6 @@ export default {
       if (this.screenWidth > 1100) {
         /* 表示pc端，弹窗隐藏*/
         this.searchdialogVisible = false
-        console.log(this.pcsearchenterPriseInfo)
       } else {
         /* 表示平板端,弹窗显示*/
         this.searchdialogVisible = true
@@ -316,6 +315,7 @@ export default {
         queryName: this.pcsearchenterPriseInfo.name
       }
       company_list(query).then(res => {
+        console.log(res)
         this.companys = res.data
         this.total = res.recordsTotal
       })
@@ -347,137 +347,137 @@ export default {
 </script>
 
 <style>
-  /* 	* {
+	/* 	* {
 		font-family: Microsoft Yahei;
 		padding: 0rem;
 		margin: 0rem;
 	} */
 
-  .searchH {
-    width: 100%;
-    display: flex;
+	.searchH {
+		width: 100%;
+		display: flex;
 
-    color: gray;
-    margin-top: -10px;
-    margin-left: 70px;
-  }
+		color: gray;
+		margin-top: -10px;
+		margin-left: 70px;
+	}
 
-  .searchText {
-    margin-left: 0.2rem;
-    margin-right: 0.1rem;
-  }
+	.searchText {
+		margin-left: 0.2rem;
+		margin-right: 0.1rem;
+	}
 
-  .update-dialog-1 {
-    width: 20%;
-  }
+	.update-dialog-1 {
+		width: 20%;
+	}
 
-  .qiyecreattime {
-    width: 100px;
-  }
+	.qiyecreattime {
+		width: 100px;
+	}
 
-  .box-card {
-    width: 18%;
-    color: gray;
-    margin: 8px;
+	.box-card {
+		width: 18%;
+		color: gray;
+		margin: 8px;
 
-  }
+	}
 
-  .el-card__body {
-    padding: 10px;
-  }
+	.el-card__body {
+		padding: 10px;
+	}
 
-  .card_text {
-    padding: 5px 0px 5px 8px;
+	.card_text {
+		padding: 5px 0px 5px 8px;
 
-  }
+	}
 
-  .div_number_bg {
-    background-image: url(../../assets/img/number_bg.png);
-    background-repeat: no-repeat;
-    background-size: auto;
-    width: 15px;
-    height: 25px;
-    text-align: center;
-    font-size: 12px;
-    color: #FFFFFF;
-  }
+	.div_number_bg {
+		background-image: url(../../assets/img/number_bg.png);
+		background-repeat: no-repeat;
+		background-size: auto;
+		width: 15px;
+		height: 25px;
+		text-align: center;
+		font-size: 12px;
+		color: #FFFFFF;
+	}
 
-  .enterpriseCard {
-    margin: 10px 20px 20px 60px;
-    display: flex;
-    flex-wrap: wrap;
-  }
+	.enterpriseCard {
+		margin: 10px 20px 20px 60px;
+		display: flex;
+		flex-wrap: wrap;
+	}
 
-  @media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1024px) {
 
-    * {
-      font-size: 14px;
-      font-family: Microsoft Yahei;
-      padding: 0;
-      margin: 0;
+		* {
+			font-size: 14px;
+			font-family: Microsoft Yahei;
+			padding: 0;
+			margin: 0;
 
-    }
+		}
 
-    /* 隐藏pc的搜索条件*/
-    .searchT {
-      display: none;
-    }
+		/* 隐藏pc的搜索条件*/
+		.searchT {
+			display: none;
+		}
 
-    .searchH {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      color: gray;
+		.searchH {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			color: gray;
 
-      margin-left: 30px;
+			margin-left: 30px;
 
-    }
+		}
 
-    .enterpriseCard {
-      margin: 5px 20px 20px 20px;
-      display: flex;
-      flex-wrap: wrap;
-    }
+		.enterpriseCard {
+			margin: 5px 20px 20px 20px;
+			display: flex;
+			flex-wrap: wrap;
+		}
 
-    .enterpriseInput {
-      width: 21%;
-      padding: 0rem;
-      margin: 0rem;
-    }
+		.enterpriseInput {
+			width: 21%;
+			padding: 0rem;
+			margin: 0rem;
+		}
 
-    .qiyetypeselect {
-      width: 20%;
-    }
+		.qiyetypeselect {
+			width: 20%;
+		}
 
-    .qiyecreattime {
-      width: 5%;
-    }
+		.qiyecreattime {
+			width: 5%;
+		}
 
-    .box-card {
-      width: 30%;
-      color: gray;
-      margin: 8px;
+		.box-card {
+			width: 30%;
+			color: gray;
+			margin: 8px;
 
-    }
+		}
 
-    .el-card__body {
-      padding: 10px;
-    }
+		.el-card__body {
+			padding: 10px;
+		}
 
-    .card_text {
-      padding: 5px 0px 5px 12px;
+		.card_text {
+			padding: 5px 0px 5px 12px;
 
-    }
+		}
 
-    .div_number_bg {
-      background-image: url(../../assets/img/number_bg.png);
-      background-repeat: no-repeat;
-      background-size: auto;
-      width: 15px;
-      height: 25px;
-      text-align: center;
-      font-size: 12px;
-      color: #FFFFFF;
-    }
-  }
+		.div_number_bg {
+			background-image: url(../../assets/img/number_bg.png);
+			background-repeat: no-repeat;
+			background-size: auto;
+			width: 15px;
+			height: 25px;
+			text-align: center;
+			font-size: 12px;
+			color: #FFFFFF;
+		}
+	}
 </style>
