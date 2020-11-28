@@ -4,11 +4,11 @@
     <div class="screen">
       <span> 企业：</span>
       <el-select v-model="company_value" placeholder="请选择" class="select" size="mini">
-        <el-option v-for="item in company_list" :key="item.id" :label="item.companyName" :value="item.id" />
+        <el-option v-for="item in company_list" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
       <span>类型：</span>
       <el-select v-model="style_value" placeholder="请选择" class="select" size="mini">
-        <el-option v-for="item in style_list" :key="item.id" :label="item.sblx" :value="item.id" />
+        <el-option v-for="item in style_list" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
       <span>型号：</span>
       <el-select v-model="xh_value" placeholder="请选择" class="select" size="mini">
@@ -36,10 +36,13 @@
 <script>
 import 'handsontable-pro/dist/handsontable.full.css'
 import Handsontable from 'handsontable-pro'
+
 import {
-  company_listData,
-  deviceType_listData
-} from '@/api/getlist'
+  companyListCom
+} from '@/api/companyManager.js'
+import {
+  deviceTypeListCom
+} from '@/api/deviceSetUp.js'
 
 import {
   deviceInforSaveMore
@@ -74,15 +77,10 @@ export default {
     this.saveData()
   },
   created() {
-    var query = {
-      access_token: localStorage.getItem('accessToken'),
-      start: 0,
-      length: '2000'
-    }
-    company_listData(query).then(res => {
+    companyListCom().then(res => {
       this.company_list = res.data
     })
-    deviceType_listData(query).then(res => {
+    deviceTypeListCom().then(res => {
       this.style_list = res.data
     })
   },

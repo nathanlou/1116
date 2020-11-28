@@ -58,3 +58,12 @@ export function deviceInforDeleteAll(data) {
     params: data
   })
 }
+
+// 设备类型下拉框查询
+export function deviceTypeListCom() {
+  return request({
+    url: '/sbgl/deviceType_listCom',
+    method: 'post',
+    params: {'access_token': localStorage.getItem('accessToken')}
+  })
+}

@@ -5,7 +5,7 @@
       <div style="display: flex;" size="mini">
         <el-form-item label="企业" prop="companyId" size="mini" style="width: 40%;margin-right: 8%;">
           <el-select v-model="ruleForm.companyId" placeholder="请选择" style="width: 100%;">
-            <el-option v-for="item in companyName" :key="item.value" :label="item.companyName" :value="item.id" />
+            <el-option v-for="item in companyName" :key="item.key" :label="item.value" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="设备编号" prop="bh" size="mini" style="width: 40%;margin-right: 8%;">
@@ -27,7 +27,7 @@
       <div style="display: flex;">
         <el-form-item label="设备种类" prop="sblxId" style="width: 40%;margin-right: 8%;" size="mini">
           <el-select v-model="ruleForm.sblxId" placeholder="请选择" style="width: 100%;">
-            <el-option v-for="item in sbzl_list" :key="item.value" :label="item.sblx" :value="item.id" />
+            <el-option v-for="item in sbzl_list" :key="item.key" :label="item.value" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="设备型号" prop="sbxh" style="width: 40%;" size="mini">
@@ -82,10 +82,17 @@
 
 <script>
 import {
-  company_listData,
-  equipment_add,
-  deviceType_listData
+  equipment_add
 } from '@/api/getlist'
+
+import {
+  companyListCom
+} from '@/api/companyManager.js'
+
+import {
+  deviceTypeListCom
+} from '@/api/deviceSetUp.js'
+
 export default {
   data() {
     var cart = (rule, value, callback) => {
@@ -197,15 +204,10 @@ export default {
     }
   },
   created() {
-    var query = {
-      access_token: localStorage.getItem('accessToken'),
-      start: 0,
-      length: '2000'
-    }
-    company_listData(query).then(res => {
+    companyListCom().then(res => {
       this.companyName = res.data
     })
-    deviceType_listData(query).then(res => {
+    deviceTypeListCom().then(res => {
       this.sbzl_list = res.data
     })
   },

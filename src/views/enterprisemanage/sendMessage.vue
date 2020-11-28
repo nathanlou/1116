@@ -4,7 +4,7 @@
       <span style="width:6rem;">选择企业：</span>
       <el-select v-model="qCompanyId" placeholder="请选择" class="select" size="mini" width="10%">
         <el-option key="all" label="全部" value="all" />
-        <el-option v-for="item in company_list" :key="item.value" :label="item.companyName" :value="item.id" />
+        <el-option v-for="item in company_list" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
     </div>
     <div class="" style="margin-top: 0.625rem;">
@@ -56,8 +56,8 @@
 
 <script>
 import {
-  company_listData
-} from '@/api/getlist'
+  companyListCom
+} from '@/api/companyManager.js'
 import {
   msgCont_send,
   msgCont_listSend,
@@ -90,7 +90,7 @@ export default {
       start: 0,
       length: '2000'
     }
-    company_listData(query).then(res => {
+    companyListCom().then(res => {
       this.company_list = res.data
     })
     msgType_listData(query).then(res => {

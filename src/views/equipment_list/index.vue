@@ -3,7 +3,7 @@
     <div class="screen">
       企业：<el-select v-model="query.qCompanyId" placeholder="请选择" class="select" size="mini" width="10%">
         <el-option key="" label="全部" value="" />
-        <el-option v-for="item in company_list" :key="item.value" :label="item.companyName" :value="item.id" />
+        <el-option v-for="item in company_list" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
       关键字：
       <el-input v-model="query.qKeyword" placeholder="编号/内部编号/sim" class="select" size="mini" />
@@ -91,9 +91,11 @@
 
 <script>
 import {
-  equipment_list /* equipment_del */,
-  company_listData
+  equipment_list /* equipment_del */
 } from '@/api/getlist'
+import {
+  companyListCom
+} from '@/api/companyManager.js'
 import {
   deviceInforGetEwm,
   deviceInforDeleteAll
@@ -137,13 +139,9 @@ export default {
     this.query.qState = this.$route.query.status
     this.getlist()
     this.handleCurrentChange()
-    var query = {
-      access_token: localStorage.getItem('accessToken'),
-      start: 0,
-      length: '2000'
-    }
-    company_listData(query).then(res => {
-      this.company_list = res.data
+    companyListCom().then(res => {
+      console.log('11111111111', res)
+      // this.company_list = res.data
     })
   },
   methods: {

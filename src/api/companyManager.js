@@ -41,3 +41,11 @@ export function companyUserDelete(data) {
   })
 }
 
+//下拉框查询
+export function companyListCom() {
+  return request({
+    url: '/qygl/company_listCom',
+    method: 'post',
+    params:{'access_token': localStorage.getItem('accessToken')}
+  })
+}

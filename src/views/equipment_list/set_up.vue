@@ -158,7 +158,7 @@
           </el-form-item>
           <el-form-item label="迁移企业">
             <el-select v-model="qyvalue" placeholder="请选择">
-              <el-option v-for="item in qycompany" :key="item.id" :label="item.companyName" :value="item.id" />
+              <el-option v-for="item in qycompany" :key="item.key" :label="item.value" :value="item.key" />
             </el-select>
           </el-form-item>
           <el-form-item label="备注">
@@ -223,9 +223,11 @@
 <script>
 import {
   equipment_del,
-  equipment_msg,
-  company_listData
+  equipment_msg
 } from '@/api/getlist'
+import {
+  companyListCom
+} from '@/api/companyManager.js'
 import {
   deviceTransferSave,
   deviceOpLogListData
@@ -313,12 +315,7 @@ export default {
   methods: {
     // 查询所有企业列表
     getAllCompany() {
-      const query = {
-        access_token: localStorage.getItem('accessToken'),
-        start: '0',
-        length: '1000'
-      }
-      company_listData(query).then(res => {
+      companyListCom().then(res => {
         if (res.status === 200) {
           this.qycompany = res.data
         } else {
