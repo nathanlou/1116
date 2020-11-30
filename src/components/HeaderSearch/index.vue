@@ -28,8 +28,12 @@ export default {
       show: true
     }
   },
-  created() {
+  mounted() {
     this.getmsg()
+    setInterval(this.getmsg, 30000)
+  },
+  beforeDestroy() {
+    clearInterval(this.getmsg)
   },
   methods: {
     click() {
@@ -45,6 +49,7 @@ export default {
         this.value = res.data
       })
     }
+
   }
 }
 </script>

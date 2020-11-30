@@ -26,7 +26,7 @@
         </div>
         <div class="right_text">
           <div class="title">在用设备</div>
-          <div class="num">0</div>
+          <div class="num">{{ overviews.use }}</div>
         </div>
       </div>
       <div class="overview" @click="all('offline')">
@@ -100,8 +100,8 @@
           </div>
           <ul v-for="(item,index) in announcement" :key="index">
             <li class="text">
-              <span style="color: #399EF4;margin-right: 0.4rem;"> [{{ item.time }}]</span>
-              <span style="">{{ item.msg }}</span>
+              <span style="color: #399EF4;margin-right: 0.4rem;"> [{{ item.readTime }}]</span>
+              <span style="">{{ item.cont }}</span>
             </li>
           </ul>
         </div>
@@ -115,6 +115,9 @@
 import {
   indexdata
 } from '@/api/globaldata'
+import {
+  msgReceive_listData
+} from '@/api/companyUser'
 import Chart from '@/components/Charts/MixChart'
 import Keyboard from '@/components/Charts/Keyboard'
 import LineMarker from '@/components/Charts/LineMarker'
@@ -129,28 +132,7 @@ export default {
   data() {
     return {
       overviews: '',
-      announcement: [{
-        time: '2020-10-23 08:29',
-        msg: '管理员通知,A1002设备标定异常，请及时关注'
-      },
-      {
-        time: '2020-10-23 08:29',
-        msg: '管理员通知,A1002设备标定异常，请及时关注'
-      },
-      {
-        time: '2020-10-23 08:29',
-        msg: '管理员通知,A1002设备标定异常，请及时关注'
-      },
-      {
-        time: '2020-10-23 08:29',
-        msg: '管理员通知,A1002设备标定异常，请及时关注'
-      },
-      {
-        time: '2020-10-23 08:29',
-        msg: '管理员通知,A1002设备标定异常，请及时关注'
-      }
-
-      ]
+      announcement: []
     }
   },
   created() {
@@ -163,6 +145,14 @@ export default {
       }
       indexdata(query).then(res => {
         this.overviews = res.data.statBean
+      })
+      const querys = {
+        access_token: localStorage.getItem('accessToken'),
+        start: 0,
+        length: 10
+      }
+      msgReceive_listData(querys).then(res => {
+        this.announcement = res.data
       })
     },
     all(data) {

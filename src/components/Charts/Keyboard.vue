@@ -26,7 +26,6 @@ export default {
         access_token: localStorage.getItem('accessToken')
       }
       statMap(query).then(res => {
-        console.log(res)
         this.chart.setOption({
           title: {
             text: '全国设备分布图',

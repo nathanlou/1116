@@ -16,3 +16,21 @@ export function statMap(data) {
     params: data
   })
 }
+
+// 获取用户信息
+export function getSessionUser(data) {
+  return request({
+    url: '/oauth/getSessionUser',
+    method: 'post',
+    params: data
+  })
+}
+
+// 用户自己修改秘密
+export function updatepassword(data) {
+  return request({
+    url: '/sys/sysUser_updateMyPassword',
+    method: 'post',
+    params: data
+  })
+}

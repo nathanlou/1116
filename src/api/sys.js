@@ -152,3 +152,12 @@ export function sysPower_save(data) {
     params: data
   })
 }
+
+// 角色分配模块
+export function saveRoleModules(data) {
+  return request({
+    url: '/sys/sysPower_saveRoleModules',
+    method: 'post',
+    params: data
+  })
+}

@@ -140,7 +140,6 @@ export default {
     this.getlist()
     this.handleCurrentChange()
     companyListCom().then(res => {
-      console.log('11111111111', res)
       // this.company_list = res.data
     })
   },
