@@ -308,7 +308,7 @@
         this.$refs['form'].validate((valid) => {
           if (valid) {
             this.$refs.upload.submit()
-            if (!this.form.file) {
+            if (this.form.action === 'save' && !this.form.file) {
               this.$message.error('请上传升级包文件')
               return false
             }
