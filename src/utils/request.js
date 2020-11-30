@@ -9,6 +9,8 @@ import {
   setToken
 } from '@/utils/auth'
 
+let refreshTokenFlg = false;//是否正在刷新同步
+
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // create an axios instance
 const service = axios.create({
@@ -21,7 +23,6 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -37,7 +38,31 @@ service.interceptors.request.use(
     return Promise.reject(error)
   }
 )
-
+let ref ;
+function job(){
+  try {
+    //先清理
+    clearTimeout(ref);
+  } catch (e) {
+    //TODO handle the exception
+    console.log("清理定时任务失败", refreshToken)
+  }
+  store.dispatch('user/RefreshToken').then(res => {
+    //刷新下token
+    console.log("刷新了token",res)
+    let time = new Date(sessionStorage.getItem('tokenInvalidateTime')).getTime()-60000;
+    if(time > 1728000000 ){
+      time = 1728000000;
+    }
+    if(time < 60000 *5){
+      time = 60000;
+    }
+    ref = setTimeout(function(){
+      job()
+    },time)
+    refreshTokenFlg = false;
+  })
+}
 // response interceptor
 service.interceptors.response.use(
   /**
@@ -77,6 +102,11 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
+    }
+    let tokenInvalidateTime = sessionStorage.getItem('tokenInvalidateTime');
+    if(!refreshTokenFlg && response.config.url && response.config.url.indexOf('/oauth/token') == -1  && tokenInvalidateTime && new Date(tokenInvalidateTime).getTime() <= new Date().getTime() + 60000){
+      refreshTokenFlg = true;
+      job()
     }
     return res
   },

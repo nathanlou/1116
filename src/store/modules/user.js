@@ -25,10 +25,9 @@ const state = {
   introduction: '',
   roles: []
 }
-let refreshToken;
+// let refreshToken;
 
-function job(){
-  debugger;
+/* function job(){
     try {
       //先清理
       clearTimeout(refreshToken);
@@ -36,23 +35,11 @@ function job(){
       //TODO handle the exception
       console.log("清理定时任务失败", refreshToken)
     }
-    refresh_token({
-      refresh_token: sessionStorage.getItem('refreshToken'),
-      client_id: 'web',
-      client_secret: 'secret',
-      grant_type: 'refresh_token',
-      scope: 'all'
-    }).then(response => {
-      sessionStorage.setItem('accessToken', response.data.access_token)
-      sessionStorage.setItem('refreshToken', response.data.refresh_token)
-      jobRefreshToken(response.data.expires_in);
-    }).catch(error => {
-      reject(error)
-    })
+
 
 }
-
-//刷新token定时任务
+ */
+/* //刷新token定时任务
 const jobRefreshToken = function(expires_in) {
   if (!expires_in) {
     console.log("刷新token失败")
@@ -69,7 +56,7 @@ const jobRefreshToken = function(expires_in) {
   refreshToken = setTimeout(function(){
     job();
   }, time )
-};
+}; */
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -114,17 +101,9 @@ const actions = {
         sessionStorage.setItem('role', data.token_type)
         localStorage.setItem('accessToken', data.access_token)
 
-        //记录刷新token的key
+        //记录刷新token的key 和失效时间
         sessionStorage.setItem('refreshToken', data.refresh_token)
-        try {
-          //先清理
-          clearTimeout(refreshToken);
-        } catch (e) {
-          //TODO handle the exception
-          console.log("清理定时任务失败", refreshToken)
-        }
-        //再下任务
-        jobRefreshToken(data.expires_in)
+        sessionStorage.setItem('tokenInvalidateTime', new Date(new Date().getTime() + data.expires_in - 60000));
 
         resolve()
       }).catch(error => {
@@ -145,6 +124,28 @@ const actions = {
       })
     })
   },
+  RefreshToken({
+    commit,
+    state
+  }) {
+    return new Promise((resolve, reject) => {
+      refresh_token({
+        refresh_token: sessionStorage.getItem('refreshToken'),
+        client_id: 'web',
+        client_secret: 'secret',
+        grant_type: 'refresh_token',
+        scope: 'all'
+      }).then(response => {
+        localStorage.setItem('accessToken', response.data.access_token)
+        sessionStorage.setItem('refreshToken', response.data.refresh_token)
+        sessionStorage.setItem('tokenInvalidateTime', new Date(new Date().getTime() +  response.data.expires_in - 60000))
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   // user logout
   logout({
     commit,
@@ -156,19 +157,11 @@ const actions = {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
-
-        try {
-          //先清理
-          clearTimeout(refreshToken);
-        } catch (e) {
-          //TODO handle the exception
-          console.log("清理定时任务失败", refreshToken)
-        }
-
         // resetRouter()
         sessionStorage.removeItem('role');
         localStorage.removeItem('accessToken');
         sessionStorage.removeItem('hasRouter');
+        sessionStorage.removeItem('tokenInvalidateTime');
         // reset visited views and cached views
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, {
@@ -226,6 +219,5 @@ export default {
   namespaced: true,
   state,
   mutations,
-  actions,
-  refreshToken
+  actions
 }

@@ -21,3 +21,4 @@ selenium-debug.log
 
 package-lock.json
 yarn.lock
+src/views/equipment_list/index.vue

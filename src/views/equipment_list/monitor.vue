@@ -117,7 +117,6 @@
                     <div v-if="item.cd <= 1">
                       <el-input
                         v-model="deviceDataVals[item.jcqdz]"
-                        :placeholder="item.cd"
                         size="small"
                         class="inputW"
                         @blur="resetValue(item)"
@@ -336,9 +335,17 @@ export default {
     }
   },
   created: function() {
-    this.idKey = this.$route.query.rowData.id
-    this.typeKey = this.$route.query.rowData.sblxId
-    this.rowData = this.$route.query.rowData
+    let rowData = this.$route.query.rowData
+    if (!rowData.sblxId) {
+      rowData = JSON.parse(sessionStorage.getItem('monitor'))
+    } else {
+      sessionStorage.setItem('monitor', JSON.stringify(rowData))
+    }
+
+    this.idKey = rowData.id
+    this.typeKey = rowData.sblxId
+    this.rowData = rowData
+
     if (this.idKey) {
       // 发起soket
       // this.initWebSocket()
@@ -368,7 +375,6 @@ export default {
     resetValue(item) {
       const data = this.deviceDataVals[item.jcqdz]
       const paramData = item.cd > 1 ? data.join(',') : data
-      console.log(item.jcqdz)
       const param = {
         'address1': item.jcqdz,
         'length': item.cd,
@@ -379,11 +385,12 @@ export default {
       }
       console.log(param)
       deviceInforSetAddessVal(param).then(res => {
-        if (res.status !== 200) {
-          this.$alert('修改设备参数失败', '提示', {
+        if (res.status === 200) {
+          this.$message.success('修改成功')
+          /* this.$alert('修改设备参数失败', '提示', {
             confirmButtonText: '确定',
             callback: action => {}
-          })
+          }) */
         } else {
           console.log(res.msg)
         }
