@@ -5,15 +5,18 @@ export function deviceVersionListData(data) {
   return request({
     url: '/sbgl/deviceVersion_listData',
     method: 'post',
-    params:data
+    params: data
   })
 }
 //升级包管理新增/修改
 export function deviceVersionSave(data) {
   return request({
     url: '/sbgl/deviceVersion_save',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
     method: 'post',
-    params:data
+    params: data
   })
 }
 //查看详情
@@ -21,15 +24,15 @@ export function deviceVersionGetDetail(data) {
   return request({
     url: '/sbgl/deviceVersion_getDetail',
     method: 'post',
-    params:data
+    params: data
   })
 }
 //企业升级包-下载
 export function deviceVersionDownload(data) {
   return request({
     url: '/sbgl/deviceVersion_download',
-    method:'get',
-    params:data
+    method: 'get',
+    params: data
   })
 }
 //删除
@@ -37,7 +40,7 @@ export function deviceVersionDelete(data) {
   return request({
     url: '/sbgl/deviceVersion_delete',
     method: 'post',
-    params:data
+    params: data
   })
 }
 
@@ -46,6 +49,6 @@ export function deviceVersionGetModel(data) {
   return request({
     url: '/sbgl/deviceVersion_getModel',
     method: 'post',
-    params:data
+    params: data
   })
 }
