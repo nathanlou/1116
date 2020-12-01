@@ -1,0 +1,205 @@
+[33mcommit 2a7c65f7ecf6e8028c63a7770e1f55185d8dc13a[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: “Xe <798494819@qq.com>
+Date:   Mon Nov 30 17:41:28 2020 +0800
+
+    角色管理以及其他
+
+[33mcommit c642529a5c844ca901e8639313ea32767d883032[m
+Author: zhaosong <838923588@qq.com>
+Date:   Sat Nov 28 10:04:01 2020 +0800
+
+    修改下拉框
+    
+    修改下拉框
+
+[33mcommit 5f152cf9958fd9a1c3cd1d024f733d3986c7635d[m
+Merge: 6620214 632c805
+Author: “Xe <798494819@qq.com>
+Date:   Fri Nov 27 17:22:34 2020 +0800
+
+    Merge branch 'main' of https://github.com/nathanlou/1116 into main
+
+[33mcommit 662021435a76f314ab56a517f3c423eebd9ca5d0[m
+Author: “Xe <798494819@qq.com>
+Date:   Fri Nov 27 17:04:50 2020 +0800
+
+    11.27
+
+[33mcommit 632c805d02ac0b2c7e76eecc613ea96322595e82[m
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 27 16:41:19 2020 +0800
+
+    BUG修复完毕
+    
+    BUG修复完毕
+
+[33mcommit 688db4de8de00f29a694ae371db047bdb883d3ab[m
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 27 16:15:50 2020 +0800
+
+    BUG修复
+    
+    BUG修复
+
+[33mcommit 29386fd70302c18b8dff01155f1183752fd8038a[m
+Merge: 83d0857 a832e7e
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 27 15:34:07 2020 +0800
+
+    Merge branch 'main' of https://github.com/nathanlou/1116 into main
+
+[33mcommit 83d085703f342be7758a5eae1870266afc3758de[m
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 27 15:33:25 2020 +0800
+
+    消息路由
+    
+    消息路由
+
+[33mcommit a832e7ee20920ef17d497416756a26439d403308[m
+Merge: c7f0d4b 402931a
+Author: “Xe <798494819@qq.com>
+Date:   Fri Nov 27 14:51:13 2020 +0800
+
+    发送通告接口
+
+[33mcommit c7f0d4bdbaf69aee8f6417cab03dba34b12f2cbd[m
+Author: “Xe <798494819@qq.com>
+Date:   Fri Nov 27 14:44:30 2020 +0800
+
+    发送通知接口
+
+[33mcommit 402931ab958adaf1c0f873f3298eacbeb6241698[m
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 27 11:40:40 2020 +0800
+
+    修复问题
+    
+    修复问题
+
+[33mcommit 89930bb20fb80a906ab485a094116fa8ef6a3aac[m
+Author: zhaosong <838923588@qq.com>
+Date:   Wed Nov 25 20:57:00 2020 +0800
+
+    定时任务处理
+    
+    定时任务处理
+
+[33mcommit 715655a4030b242290133dfaf6b92f24f20441f3[m
+Author: zhaosong <838923588@qq.com>
+Date:   Wed Nov 25 19:31:26 2020 +0800
+
+    定时刷新token
+    
+    定时刷新token
+
+[33mcommit 05fe1bd0bb62cc30897efe5d62130e901a774b43[m
+Author: zhaosong <838923588@qq.com>
+Date:   Wed Nov 25 15:43:11 2020 +0800
+
+    版本提交
+    
+    版本提交
+
+[33mcommit fff29607623f264c7a6565fc18069657986d354b[m
+Author: zhaosong <838923588@qq.com>
+Date:   Wed Nov 25 09:07:26 2020 +0800
+
+    修改
+    
+    修改
+
+[33mcommit 132061543f9f4bd1fcbd4dc65c386366bd477151[m
+Author: “Xe <798494819@qq.com>
+Date:   Tue Nov 24 18:05:16 2020 +0800
+
+    首页接口、其他内容
+
+[33mcommit dd203cd3ed9211215588711d8bf732cb9ed6ce3f[m
+Author: “Xe <798494819@qq.com>
+Date:   Mon Nov 23 19:06:30 2020 +0800
+
+    系统管理中用户管理接口
+
+[33mcommit 03ed5b76ea1bfc1e14d912cd856f4487ab4dff61[m
+Author: “Xe <798494819@qq.com>
+Date:   Sat Nov 21 17:13:41 2020 +0800
+
+    对接设备种类、系统日志、系统配置接口
+
+[33mcommit 74bc2307c4fead85e583fe6fc1ebcdee89fbd2f3[m
+Author: “Xe <798494819@qq.com>
+Date:   Fri Nov 20 21:21:20 2020 +0800
+
+    设备分类方面的接口对接
+
+[33mcommit d4e915d52293cdb654118245f1a16b32107bc9c6[m
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 20 13:45:15 2020 +0800
+
+    登录页面-统一处理返回值
+
+[33mcommit 5689eda74d2aa014ff21ea4b379f218829776825[m
+Author: zhaosong <838923588@qq.com>
+Date:   Fri Nov 20 08:39:48 2020 +0800
+
+    调整操作记录查询
+
+[33mcommit e2a387ee6a552a7a83ec61a46e98e7ff39e56b2b[m
+Merge: 36a2240 d4a894e
+Author: zhaosong <838923588@qq.com>
+Date:   Thu Nov 19 21:29:50 2020 +0800
+
+    Merge branch 'main' of https://github.com/nathanlou/1116 into main
+
+[33mcommit 36a224007201f555ec516fd2bf7f7d76bb2d1345[m
+Author: zhaosong <838923588@qq.com>
+Date:   Thu Nov 19 21:28:45 2020 +0800
+
+    迁移记录，设备列表监控、设置页面
+
+[33mcommit d4a894ebcffbebbc37a7e9cc9c61b5660c16b07f[m
+Author: “Xe <798494819@qq.com>
+Date:   Thu Nov 19 16:17:15 2020 +0800
+
+    添加设备接口、设备列表搜索
+
+[33mcommit ce19e713004b291d8371232d25845cb8347a1546[m
+Author: zhaosong <838923588@qq.com>
+Date:   Thu Nov 19 15:45:37 2020 +0800
+
+    监控也面完成
+
+[33mcommit 0614612c01cc09cf871bb09039bdd50b48e38d21[m
+Author: zhaosong <838923588@qq.com>
+Date:   Thu Nov 19 13:54:09 2020 +0800
+
+    监控页面
+    
+    还差小雾桩的
+
+[33mcommit 037c56d53fc165e4671a500a37b6e2e9e0ef591d[m
+Author: zhaosong <838923588@qq.com>
+Date:   Wed Nov 18 19:40:08 2020 +0800
+
+    监控页面
+
+[33mcommit e599c8c30d7d2af539bb16477a52d1a0131c09b6[m
+Author: zhaosong <838923588@qq.com>
+Date:   Wed Nov 18 09:34:04 2020 +0800
+
+    修复报错
+
+[33mcommit 32138731a6a6ca80198d15ed2ec8b777c63ed363[m
+Author: zhaosong <838923588@qq.com>
+Date:   Tue Nov 17 18:33:17 2020 +0800
+
+    add by zhaos
+    
+    add by zhaos
+
+[33mcommit 949caf0b91dbf5247c71b1fcac4d60117ca2ca8a[m
+Author: “Xe <798494819@qq.com>
+Date:   Tue Nov 17 08:10:26 2020 +0800
+
+    first commit
