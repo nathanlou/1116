@@ -67,3 +67,11 @@ export function deviceTypeListCom() {
     params: {'access_token': localStorage.getItem('accessToken')}
   })
 }
+// 获取经纬度
+export function deviceInforUpdateZb(data) {
+  return request({
+    url: '/sbgl/deviceInfor_updateZb',
+    method: 'post',
+    params: data
+  })
+}

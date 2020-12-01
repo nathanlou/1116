@@ -134,18 +134,27 @@
       />
     </div>
     <!-- 地图定位 -->
-    <el-dialog title="地图定位" :visible.sync="showMapFlg" width="80%">
-      <div class="amap-page-container" style="width: 100%;height: 500px;">
+    <el-dialog title="地图定位" :visible.sync="showMapFlg" width="80%" style="box-sizing: border-box;">
+      <div class="amap-page-container">
+        <el-amap-search-box class="search-box" :search-option="searchOption" :on-search-result="onSearchResult" />
         <el-amap
           ref="map"
-          :zoom="zoom"
+          class="map"
+          :zoom="12"
           vid="amapDemo"
           :center="center"
           expand-zoom-range="true"
           :plugin="plugin"
           :pitch="66"
+          :events="events"
         >
           <el-amap-marker :position="center" />
+          <div style="display: flex;">
+            <div class="toolbar">position: {{ lng }}, {{ lat }} address: {{ address }}</div>
+            <div style="width: 20%;display: flex;justify-content: flex-end; align-items: center;height: 50px;">
+              <el-button type="primary" round size="small" @click="confirThisAddress()">确认选择</el-button>
+            </div>
+          </div>
         </el-amap>
       </div>
     </el-dialog>
@@ -230,14 +239,19 @@ import {
 } from '@/api/companyManager.js'
 import {
   deviceTransferSave,
-  deviceOpLogListData
+  deviceOpLogListData,
+  deviceInforUpdateZb
 } from '@/api/deviceSetUp.js'
 import {
   parseTime
 } from '@/utils/index.js'
 export default {
   data() {
+    const self = this
     return {
+      address: '',
+      markers: [],
+      searchOption: '',
       showMapFlg: false,
       deviceMoveNote: '',
       ipdz: false,
@@ -264,8 +278,34 @@ export default {
       tableData: [],
 
       // 地图
-      zoom: 10,
-      center: [113.860114, 35.305989],
+      events: {
+        click(e) {
+          const {
+            lng,
+            lat
+          } = e.lnglat
+          self.lng = lng
+          self.lat = lat
+          self.center = [lng, lat]
+          // 这里通过高德 SDK 完成。
+          var geocoder = new AMap.Geocoder({
+            radius: 1000,
+            extensions: 'all'
+          })
+          geocoder.getAddress([lng, lat], function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+              if (result && result.regeocode) {
+                self.address = result.regeocode.formattedAddress
+                // self.$nextTick()
+              }
+            }
+          })
+        }
+      },
+      lng: 0,
+      lat: 0,
+      zoom: 6,
+      center: [0, 0],
       //  自动定位到当前位置
       plugin: [{
         timeout: 100, // 超过10秒后停止定位，默认：无穷大
@@ -432,16 +472,44 @@ export default {
     },
     // 显示地图
     showMap() {
-      console.log(this.msg)
-      if (this.msg.jd && this.msg.wd) {
-        this.center = [this.msg.jd, this.msg.wd]
-        this.showMapFlg = true
-      } else {
-        this.$message.error('未能获取到当前设备地址')
-      }
+      this.showMapFlg = true
     },
     goback() {
       this.$router.go(-1)
+    },
+    onSearchResult(res) {
+      const arr = res
+      const markers = []
+
+      for (const i in arr) {
+        this.center = [arr[i].lng, arr[i].lat]
+        console.log(this.center)
+        markers.push({
+          position: [arr[i].lng, arr[i].lat]
+        })
+        break
+      }
+      this.markers = markers
+    },
+    // 设置经纬度
+    confirThisAddress() {
+      const lng = this.center[0]
+      const lat = this.center[1]
+      if (!lat || !lng) {
+        this.$message.error('请再地图标记地点')
+        return
+      }
+      deviceInforUpdateZb({
+        access_token: localStorage.getItem('accessToken'),
+        id: this.msg.id,
+        jd: lng,
+        wd: lat
+      }).then(res => {
+        if (res.status === 200) {
+          this.$message.success('设置成功')
+          this.showMapFlg = false
+        }
+      })
     }
   }
 }
@@ -485,5 +553,33 @@ export default {
       font-size: 0.9rem;
     }
 
+  }
+
+  .search-box {
+    position: absolute;
+    top: 25px;
+    left: 70px;
+  }
+
+  .amap-page-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    box-sizing: border-box;
+  }
+
+  .map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: -20px;
+    left: 0;
+  }
+
+  .toolbar {
+    width: 80%;
+    height: auto;
+    color: red;
+    margin-top: 15px;
   }
 </style>
