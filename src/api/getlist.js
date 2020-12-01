@@ -71,3 +71,12 @@ export function deviceType_listData(data) {
     params: data
   })
 }
+
+// 报警处置
+export function deviceAlarm_save(data) {
+  return request({
+    url: '/sbgl/deviceAlarm_updateCz',
+    method: 'post',
+    params: data
+  })
+}

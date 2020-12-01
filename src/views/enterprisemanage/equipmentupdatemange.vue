@@ -70,8 +70,15 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-pagination class="fy" layout="total,prev, pager, next" :current-page.sync="currentPage" :page-size="pageSize"
-      :total="total" background @current-change="current_change" />
+    <el-pagination
+      class="fy"
+      layout="total,prev, pager, next"
+      :current-page.sync="currentPage"
+      :page-size="pageSize"
+      :total="total"
+      background
+      @current-change="current_change"
+    />
     <!-- 表单 -->
     <el-dialog :title="(form.action ==='save' ?'添加':'修改')+'升级包'" width="35%" :visible.sync="showForm" style="text-align: center;">
       <el-form ref="form" enctype="multipart/form-data" :model="form" label-width="100px">
@@ -109,29 +116,48 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="开始时间" prop="startTime" :rules="[{ required: true, message: '请输入开始时间', trigger: 'blur' }]">
-              <el-time-select v-model="form.startTime" :picker-options="{
+              <el-time-select
+                v-model="form.startTime"
+                :picker-options="{
                   start: '00:00',
                   step: '00:15',
                   end: form.endTime ? form.endTime:'23:59'
                 }"
-                placeholder="请输入开始时间" />
+                placeholder="请输入开始时间"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="结束时间" prop="endTime" :rules="[{ required: true, message: '请输入结束时间', trigger: 'blur' }]">
-              <el-time-select v-model="form.endTime" :picker-options="{
+              <el-time-select
+                v-model="form.endTime"
+                :picker-options="{
                   start: form.startTime ? form.startTime :'00:00',
                   step: '00:01',
                   end: '23:59'
                 }"
-                placeholder="请输入开始时间" />
+                placeholder="请输入开始时间"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="上传升级包">
-          <el-upload ref="upload" class="upload-demo" action="/sbgl/deviceVersion_save" name="file" :http-request="httpRequest"
-            :limit="1" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false"
-            :multiple="false" :data="form" accept=".bin" list-type="bin">
+          <el-upload
+            ref="upload"
+            class="upload-demo"
+            action="/sbgl/deviceVersion_save"
+            name="file"
+            :http-request="httpRequest"
+            :limit="1"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :file-list="fileList"
+            :auto-upload="false"
+            :multiple="false"
+            :data="form"
+            accept=".bin"
+            list-type="bin"
+          >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
             <div slot="tip" class="el-upload__tip">只能上传.bat文件，且不超过2M</div>
@@ -148,211 +174,210 @@
   </div>
 </template>
 <script>
-  import {
-    companyListCom
-  } from '@/api/companyManager.js'
-  import {
-    deviceTypeListCom
-  } from '@/api/deviceSetUp.js'
-  import {
-    deviceVersionListData, // 升级包管理列表查询
-    deviceVersionSave, // 升级包管理新增/修改
-    deviceVersionGetDetail, // 查看详情
-    deviceVersionDownload, // 企业升级包-下载
-    deviceVersionDelete, // 删除
-    deviceVersionGetModel // 企业升级包-根据类型查询型号列表
-  } from '@/api/packageUpdate.js'
+import {
+  companyListCom
+} from '@/api/companyManager.js'
+import {
+  deviceTypeListCom
+} from '@/api/deviceSetUp.js'
+import {
+  deviceVersionListData, // 升级包管理列表查询
+  // deviceVersionSave, // 升级包管理新增/修改
+  // deviceVersionGetDetail, // 查看详情
+  // deviceVersionDownload, // 企业升级包-下载
+  deviceVersionDelete, // 删除
+  deviceVersionGetModel // 企业升级包-根据类型查询型号列表
+} from '@/api/packageUpdate.js'
 
-  export default {
-    data() {
-      return {
-        fileList: [], // 选择的文件
-        showForm: false,
-        form: {
-          id: '',
+export default {
+  data() {
+    return {
+      fileList: [], // 选择的文件
+      showForm: false,
+      form: {
+        id: '',
+        access_token: localStorage.getItem('accessToken'),
+        action: 'save',
+        companyId: '',
+        versionNo: '',
+        startTime: '',
+        endTime: '',
+        deviceModel: '',
+        typeId: '',
+        file: null
+      },
+      formData: new FormData(),
+      total: 0, // 默认数据总数
+      pageSize: 10, // 每页的数据条数
+      currentPage: 1, // 默认开始页面
+      istag: true,
+      updatedialogVisible: false,
+      optionsEnterPN: [],
+      optionsEnterType: [],
+      optionsEnterTypeForm: [],
+      optionsEnterModel: [],
+      enterpriseName: '',
+      enterpriseType: '',
+      tableData: [],
+      query: {
+        access_token: localStorage.getItem('accessToken'),
+        start: 0,
+        length: 10,
+        queryCompanyId: '', // 企业ID（下拉框，带搜索）
+        queryVersionNo: '', // 版本编号手动输入
+        queryModel: '', // 设备型号，手动输入
+        queryTypeId: '' // 设备种类（下拉框）
+      }
+    }
+  },
+  created() {
+    // 加载企业下拉框
+    companyListCom().then(res => {
+      this.optionsEnterPN = res.data
+    })
+    // 加载设备类型下拉框
+    deviceTypeListCom().then(res => {
+      const list = JSON.parse(JSON.stringify(res.data))
+      list.unshift({
+        key: '',
+        value: '全部'
+      })
+      this.optionsEnterType = list
+      this.optionsEnterTypeForm = res.data
+    })
+    this.getList()
+  },
+  methods: {
+    // 删除升级包
+    deleted(row) {
+      this.$confirm('是否确认删除升级包?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(function() {
+        return deviceVersionDelete({
           access_token: localStorage.getItem('accessToken'),
-          action: 'save',
+          id: row.id
+        })
+      }).then(() => {
+        this.getList()
+        this.$message.success('删除成功')
+      }).catch(function() {})
+    },
+    toPackage(data) {
+      const aTag = document.createElement('a')
+      aTag.href = process.env.VUE_APP_BASE_API + data.filePath
+      aTag.click()
+    },
+    httpRequest(param) {
+      this.formData = new FormData()
+      const fileObj = param.file // 相当于input里取得的files
+      this.formData.append('file', fileObj) // 文件对象
+      this.form.file = fileObj.name
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
+    // 根据设备类型查找型号
+    selectModel() {
+      deviceVersionGetModel({
+        access_token: localStorage.getItem('accessToken'),
+        typeId: this.form.typeId
+      }).then(res => {
+        this.optionsEnterModel = res.data
+      })
+    },
+    // 控制表单
+    controlForm(type, row) {
+      // 如果是修改
+      if (type === 'update') {
+        this.form = JSON.parse(JSON.stringify(row))
+      } else {
+        this.form = {
           companyId: '',
           versionNo: '',
           startTime: '',
           endTime: '',
           deviceModel: '',
-          typeId: '',
-          file: null
-        },
-        formData: new FormData(),
-        total: 0, // 默认数据总数
-        pageSize: 10, // 每页的数据条数
-        currentPage: 1, // 默认开始页面
-        istag: true,
-        updatedialogVisible: false,
-        optionsEnterPN: [],
-        optionsEnterType: [],
-        optionsEnterTypeForm: [],
-        optionsEnterModel: [],
-        enterpriseName: '',
-        enterpriseType: '',
-        tableData: [],
-        query: {
-          access_token: localStorage.getItem('accessToken'),
-          start: 0,
-          length: 10,
-          queryCompanyId: '', // 企业ID（下拉框，带搜索）
-          queryVersionNo: '', // 版本编号手动输入
-          queryModel: '', // 设备型号，手动输入
-          queryTypeId: '' // 设备种类（下拉框）
+          typeId: ''
         }
       }
+      this.form.action = type
+      this.form.access_token = localStorage.getItem('accessToken')
+      this.showForm = true
     },
-    created() {
-      // 加载企业下拉框
-      companyListCom().then(res => {
-        this.optionsEnterPN = res.data
+    // 查询列表
+    getList() {
+      this.query.start = (this.currentPage - 1) * this.pageSize
+      this.query.length = this.pageSize
+      deviceVersionListData(this.query).then(res => {
+        this.tableData = res.data
+        this.total = res.recordsTotal
       })
-      // 加载设备类型下拉框
-      deviceTypeListCom().then(res => {
-        const list = JSON.parse(JSON.stringify(res.data))
-        list.unshift({
-          key: '',
-          value: '全部'
-        })
-        this.optionsEnterType = list
-        this.optionsEnterTypeForm = res.data
-      })
+    },
+    current_change: function(currentPage) {
+      this.currentPage = currentPage
       this.getList()
     },
-    methods: {
-      // 删除升级包
-      deleted(row) {
-        this.$confirm('是否确认删除升级包?', '警告', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(function() {
-          return deviceVersionDelete({
-            access_token: localStorage.getItem('accessToken'),
-            id: row.id
-          })
-        }).then(() => {
-          this.getList()
-          this.$message.success('删除成功')
-        }).catch(function() {})
-      },
-      toPackage(data) {
-        const aTag = document.createElement('a')
-        aTag.href = process.env.VUE_APP_BASE_API + data.filePath
-        aTag.click()
-      },
-      httpRequest(param) {
-        this.formData = new FormData()
-        const fileObj = param.file // 相当于input里取得的files
-        this.formData.append('file', fileObj) // 文件对象
-        this.form.file = fileObj.name
-      },
-      handleRemove(file, fileList) {
-        console.log(file, fileList)
-      },
-      handlePreview(file) {
-        console.log(file)
-      },
-      // 根据设备类型查找型号
-      selectModel() {
-        deviceVersionGetModel({
-          access_token: localStorage.getItem('accessToken'),
-          typeId: this.form.typeId
-        }).then(res => {
-          this.optionsEnterModel = res.data
-        })
-      },
-      // 控制表单
-      controlForm(type, row) {
-        // 如果是修改
-        if (type === 'update') {
-          this.form = JSON.parse(JSON.stringify(row))
-        } else {
-          this.form = {
-            companyId: '',
-            versionNo: '',
-            startTime: '',
-            endTime: '',
-            deviceModel: '',
-            typeId: ''
-          }
-        }
-        this.form.action = type
-        this.form.access_token = localStorage.getItem('accessToken')
-        this.showForm = true
-      },
-      // 查询列表
-      getList() {
-        this.query.start = (this.currentPage - 1) * this.pageSize
-        this.query.length = this.pageSize
-        deviceVersionListData(this.query).then(res => {
-          this.tableData = res.data
-          console.log(this.tableData)
-          this.total = res.recordsTotal
-        })
-      },
-      current_change: function(currentPage) {
-        this.currentPage = currentPage
-        this.getList()
-      },
-      addAccountInfo() {
-        console.log(this.userInfo)
-      },
-      submitUpload() {
-        this.$refs.upload.submit()
-      },
-      // 修改或保存
-      submit() {
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            this.$refs.upload.submit()
-            if (this.form.action === 'save' && !this.form.file) {
-              this.$message.error('请上传升级包文件')
-              return false
-            }
-            this.formData.append('id', this.form.id)
-            this.formData.append('access_token', this.form.access_token)
-            this.formData.append('action', this.form.action)
-            this.formData.append('companyId', this.form.companyId)
-            this.formData.append('versionNo', this.form.versionNo)
-            this.formData.append('startTime', this.form.startTime)
-            this.formData.append('endTime', this.form.endTime)
-            this.formData.append('deviceModel', this.form.deviceModel)
-            this.formData.append('typeId', this.form.typeId)
-            const that = this
-            this.$http({
-              method: 'post',
-              url: process.env.VUE_APP_BASE_API + '/sbgl/deviceVersion_save',
-              data: this.formData,
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }).then(function(res) {
-              if (res.data.status === 200) {
-                that.$message.success(that.formData.action === 'save' ? '添加成功' : '修改成功')
-                that.getList()
-                that.showForm = false
-              } else {
-                that.$message.error(res.data.msg ? res.data.msg : that.formData.action === 'save' ? '添加失败' :
-                  '修改失败')
-              }
-            })
-
-            // deviceVersionSave(this.formData).then(res => {
-            //   this.$message.success(this.formData.action === 'save' ? '添加成功' : '修改成功')
-            //   this.getList()
-            //   this.showForm = false
-            // })
-          } else {
+    addAccountInfo() {
+      console.log(this.userInfo)
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    // 修改或保存
+    submit() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.$refs.upload.submit()
+          if (this.form.action === 'save' && !this.form.file) {
+            this.$message.error('请上传升级包文件')
             return false
           }
-        })
-      }
-    }
+          this.formData.append('id', this.form.id)
+          this.formData.append('access_token', this.form.access_token)
+          this.formData.append('action', this.form.action)
+          this.formData.append('companyId', this.form.companyId)
+          this.formData.append('versionNo', this.form.versionNo)
+          this.formData.append('startTime', this.form.startTime)
+          this.formData.append('endTime', this.form.endTime)
+          this.formData.append('deviceModel', this.form.deviceModel)
+          this.formData.append('typeId', this.form.typeId)
+          const that = this
+          this.$http({
+            method: 'post',
+            url: process.env.VUE_APP_BASE_API + '/sbgl/deviceVersion_save',
+            data: this.formData,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then(function(res) {
+            if (res.data.status === 200) {
+              that.$message.success(that.formData.action === 'save' ? '添加成功' : '修改成功')
+              that.getList()
+              that.showForm = false
+            } else {
+              that.$message.error(res.data.msg ? res.data.msg : that.formData.action === 'save' ? '添加失败'
+                : '修改失败')
+            }
+          })
 
+          // deviceVersionSave(this.formData).then(res => {
+          //   this.$message.success(this.formData.action === 'save' ? '添加成功' : '修改成功')
+          //   this.getList()
+          //   this.showForm = false
+          // })
+        } else {
+          return false
+        }
+      })
+    }
   }
+
+}
 </script>
 
 <style>

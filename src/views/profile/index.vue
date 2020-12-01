@@ -50,10 +50,9 @@ export default {
   name: 'Profile',
   data() {
     return {
-      user: {},
       activeTab: 'activity',
       activeName: 'first',
-      form: '',
+      form: {},
       ruleForm: {
         pass: '',
         checkPass: ''

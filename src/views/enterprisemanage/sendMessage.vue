@@ -45,7 +45,7 @@
       class="fy"
       style="width: 95%;"
       :current-page.sync="currentPage"
-      :page-size="20"
+      :page-size="pagesize"
       layout="total, prev, pager, next"
       :total="total"
       @current-change="handleCurrentChange"
@@ -71,16 +71,17 @@ export default {
       typevalue: '',
       type_list: '',
       company_list: [],
-      total: '', // 默认数据总数
+      total: 1000, // 默认数据总数
       pagesize: 10, // 每页的数据条数
       currentPage: 1, // 默认开始页面
       enterpriseName: '',
       message: '',
+      tableData: [],
       start: 0,
       query: {
         access_token: localStorage.getItem('accessToken'),
         start: this.start,
-        length: 20
+        length: 10
       }
     }
   },
@@ -90,13 +91,15 @@ export default {
       start: 0,
       length: '2000'
     }
+    this.total = this.tableData.length
+    this.getlist()
+    this.handleCurrentChange()
     companyListCom().then(res => {
       this.company_list = res.data
     })
     msgType_listData(query).then(res => {
       this.type_list = res.data
     })
-    this.getlist()
   },
   methods: {
     send_out() {
@@ -118,8 +121,8 @@ export default {
       })
     },
     getlist() {
-      msgCont_listSend(this.query).then(res => {
-        console.log(res)
+      const that = this
+      msgCont_listSend(that.query).then(res => {
         this.tableData = res.data
         this.total = res.recordsTotal
       })
@@ -132,7 +135,6 @@ export default {
           id: row.id
         }
         msgCont_delete(query).then(res => {
-          console.log(res)
           if (res.status === 200) {
             this.$message({
               message: '删除成功',
@@ -145,7 +147,7 @@ export default {
     },
     handleCurrentChange(val) {
       var that = this
-      that.query.start = (val - 1) * 20
+      that.query.start = (val - 1) * 10
       this.getlist(that.start)
     },
     current_change: function(currentPage) {

@@ -9,6 +9,7 @@
 import {
   Unread
 } from '@/api/companyUser'
+import Utils from '@/utils/Unread'
 // fuse is a lightweight fuzzy-search module
 // make search results more in line with expectations
 // import Fuse from 'fuse.js'
@@ -31,6 +32,10 @@ export default {
   mounted() {
     this.getmsg()
     setInterval(this.getmsg, 30000)
+    var that = this
+    Utils.$on('demo', function(msg) {
+      that.getmsg()
+    })
   },
   beforeDestroy() {
     clearInterval(this.getmsg)
@@ -49,7 +54,6 @@ export default {
         this.value = res.data
       })
     }
-
   }
 }
 </script>

@@ -37,14 +37,15 @@
         size="mini"
       >
         <el-table-column prop="bh" sortable label="设备编号" align="center" width="170" />
-        <el-table-column prop="nbbh" sortable label="内部编号" align="center" />
+        <el-table-column prop="companyBh" sortable label="内部编号" align="center" />
+        <el-table-column prop="typeName" label="故障类型" align="center" />
         <el-table-column prop="ms" label="报警描述" align="center" />
         <el-table-column prop="czZt" label="处置状态" align="center">
           <template slot-scope="scope">
-            <div v-if="scope.row.czZt==0" style="color:green;">
+            <div v-if="scope.row.czZt===0" style="color:red;">
               未处置
             </div>
-            <div v-else style="color:red;">
+            <div v-else style="color:green;">
               已处置
             </div>
           </template>
@@ -52,14 +53,7 @@
         <el-table-column prop="createTime" label="产生时间" align="center" />
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" round @click="set_up(scope.$index, scope.row)">操作记录</el-button>
-            <el-button
-              v-if="scope.row.czZt ==0"
-              type="danger"
-              size="mini"
-              round
-              @click="xiugai(scope.$index, scope.row)"
-            >处置</el-button>
+            <el-button v-if="scope.row.czZt ===0" type="danger" size="mini" round @click="xiugai(scope.$index, scope.row)">处置</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -74,15 +68,19 @@
       <el-dialog title="处置" :visible.sync="dialogVisible" width="35%">
         <div>
           <div style="margin-bottom: 0.625rem;">设备编号：{{ bh }}</div>
+          <div style="margin-bottom: 0.625rem;">报警信息：{{ ms }}</div>
           <div>
-            处置选项：<el-select v-model="qyvalue" placeholder="请选择" size="mini">
+            处置周期：<el-select v-model="qyvalue" placeholder="请选择" size="mini">
               <el-option v-for="item in qycompany" :key="item.value" :label="item.label" :value="item.value" size="mini" />
             </el-select>
+          </div>
+          <div style="margin-bottom: 0.625rem;">处置意见：
+            <el-input v-model="message" type="textarea" :rows="3" style="width: 30rem;margin-top: 0.9375rem;" placeholder="请输入内容" />
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" size="mini" @click="dialogVisible = false">确 定</el-button>
+          <el-button type="primary" size="mini" @click="management">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -92,7 +90,8 @@
 <script>
 import {
   alarm,
-  alarmtype
+  alarmtype,
+  deviceAlarm_save
 } from '@/api/getlist'
 export default {
   data() {
@@ -102,7 +101,6 @@ export default {
       total: 1000, // 默认数据总数
       pagesize: 10, // 每页的数据条数
       currentPage: 1, // 默认开始页面
-      istag: true,
       tableData: [],
       cz_list: [{
         value: '',
@@ -115,39 +113,38 @@ export default {
         label: '未处置'
       }],
       qycompany: [{
-        value: '选项1',
-        label: '潜合测试'
+        value: '',
+        label: '无'
       }, {
-        value: '选项2',
-        label: '客户体验'
-      }],
-      company_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: '潜合测试'
-      }, {
-        value: '选项2',
-        label: '客户体验'
-      }],
+        value: '30',
+        label: '30分钟'
+      },
+      {
+        value: '1',
+        label: '1小时'
+      },
+      {
+        value: '3',
+        label: '3小时'
+      },
+      {
+        value: '6',
+        label: '6小时'
+      },
+      {
+        value: '12',
+        label: '12小时'
+      }
+      ],
       style_list: [],
-      status_list: [{
-        value: '选项0',
-        label: '全部'
-      }, {
-        value: '选项1',
-        label: '在线'
-      }, {
-        value: '选项2',
-        label: '离线'
-      }],
       company_value: '',
       style_value: '',
       status_value: '',
       cz_value: '',
+      message: '',
       qhkeyword: '',
       bh: '',
+      ms: '',
       qyvalue: '',
       start: 0,
       query: {
@@ -160,11 +157,14 @@ export default {
         queryStart: '',
         queryEnd: '',
         queryZt: ''
-      }
+      },
+      id: ''
     }
   },
   created: function() {
-    alarmtype({ access_token: localStorage.getItem('accessToken') }).then(res => {
+    alarmtype({
+      access_token: localStorage.getItem('accessToken')
+    }).then(res => {
       this.style_list = res.data
     })
     this.getDataList()
@@ -195,6 +195,8 @@ export default {
     xiugai(index, row) {
       this.dialogVisible = true
       this.bh = row.bh
+      this.ms = row.ms
+      this.id = row.id
     },
     handleCurrentChange(val) {
       this.currentPage = val
@@ -203,11 +205,18 @@ export default {
     current_change: function(currentPage) {
       this.currentPage = currentPage
     },
-    set_up(index, row) {
-      this.$router.push({
-        path: 'set_up',
-        query: {
-          key: row
+    management() {
+      const query = {
+        access_token: localStorage.getItem('accessToken'),
+        action: 'update',
+        id: this.id,
+        czZq: this.qyvalue,
+        czYj: this.message
+      }
+      deviceAlarm_save(query).then(res => {
+        console.log(res)
+        if (res.status === 200) {
+          location.reload()
         }
       })
     }
@@ -216,76 +225,76 @@ export default {
 </script>
 
 <style scoped="scoped">
-  .screen {
-    font-size: 0.875rem;
-    color: gray;
+	.screen {
+		font-size: 0.875rem;
+		color: gray;
 
-  }
+	}
 
-  .table_headr {
-    height: 2rem;
-    line-height: 2rem;
-    color: white;
-    background-color: #409EFF;
-    width: 99%;
+	.table_headr {
+		height: 2rem;
+		line-height: 2rem;
+		color: white;
+		background-color: #409EFF;
+		width: 99%;
 
-  }
+	}
 
-  .select {
-    width: 10rem;
-    margin-right: 1%;
-  }
+	.select {
+		width: 10rem;
+		margin-right: 1%;
+	}
 
-  .selectDate {
-    width: 15rem;
+	.selectDate {
+		width: 15rem;
 
-    margin-right: 1%;
-  }
+		margin-right: 1%;
+	}
 
-  .fy {
-    text-align: right;
-    margin-top: 0.625rem;
-  }
+	.fy {
+		text-align: right;
+		margin-top: 0.625rem;
+	}
 
-  .titles {
-    width: 98%;
-    margin-left: 1%;
-    margin-top: -0.8rem;
-    height: 100%;
-    margin-bottom: 1.25rem;
-    font-size: 0.875rem;
-  }
+	.titles {
+		width: 98%;
+		margin-left: 1%;
+		margin-top: -0.8rem;
+		height: 100%;
+		margin-bottom: 1.25rem;
+		font-size: 0.875rem;
+	}
 
-  .btn {
-    margin-left: 0.5rem;
-    margin-bottom: 0.625rem;
+	.btn {
+		margin-left: 0.5rem;
+		margin-bottom: 0.625rem;
 
-  }
+	}
 
-  .container_table {
-    clear: both;
-  }
+	.container_table {
+		clear: both;
+	}
 
-  @media screen and (max-width: 1024px) {
-    .titles {
-      font-size: 0.875rem;
-    }
+	@media screen and (max-width: 1024px) {
+		.titles {
+			font-size: 0.875rem;
+		}
 
-    .select {
-      width: 6.7rem;
+		.select {
+			width: 6.7rem;
 
-      margin-right: 0.5rem;
-    }
+			margin-right: 0.5rem;
+		}
 
-    .selectDate {
-      width: 21%;
-      margin-right: 1%;
-      padding: 0.2rem;
+		.selectDate {
+			width: 21%;
+			margin-right: 1%;
+			padding: 0.2rem;
 
-    }
+		}
 
-    .btn {
-      margin-top: 0.625rem;
-    }
-  }
+		.btn {
+			margin-top: 0.625rem;
+		}
+	}
 </style>

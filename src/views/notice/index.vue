@@ -3,7 +3,7 @@
     <div class="container_table">
       <div class="table_headr">列表</div>
       <el-table ref="multipleTable" :data="tableData" border stripe style="width: 100%;font-size: 13px;" :default-sort="{prop: 'date', order: 'descending'}">
-        <el-table-column prop="createName" label="通知人" align="center" />
+        <el-table-column prop="createUserName" label="通知人" align="center" />
         <el-table-column prop="typeName" label="消息类型" align="center" />
         <el-table-column prop="cont" label="通知内容" align="center" />
         <el-table-column prop="createTime" label="通知时间" align="center" />
@@ -16,7 +16,7 @@
       <el-pagination
         class="fy"
         :current-page.sync="currentPage"
-        :page-size="20"
+        :page-size="10"
         layout="total, prev, pager, next"
         :total="total"
         @current-change="handleCurrentChange"
@@ -30,6 +30,7 @@ import {
   msgReceive_listData,
   msgReceive_getDetail
 } from '@/api/companyUser'
+import Utils from '@/utils/Unread'
 export default {
   data() {
     return {
@@ -44,7 +45,7 @@ export default {
       query: {
         access_token: localStorage.getItem('accessToken'),
         start: this.start,
-        length: 20
+        length: 10
       }
     }
   },
@@ -61,7 +62,7 @@ export default {
     },
     handleCurrentChange(val) {
       var that = this
-      that.query.start = (val - 1) * 20
+      that.query.start = (val - 1) * 10
       this.getlist(that.start)
     },
     current_change: function(currentPage) {
@@ -73,7 +74,7 @@ export default {
         id: row.id
       }
       msgReceive_getDetail(query).then(res => {
-
+        Utils.$emit('demo', 'msg')
       })
     }
   }
