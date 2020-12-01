@@ -496,7 +496,7 @@ export default {
       const lng = this.center[0]
       const lat = this.center[1]
       if (!lat || !lng) {
-        this.$message.error('请再地图标记地点')
+        this.$message.error('请在地图上标记地点')
         return
       }
       deviceInforUpdateZb({
