@@ -1,6 +1,6 @@
 <template>
   <div class="titles">
-    <el-button style="margin-bottom: 1%;" type="success" icon="el-icon-edit" size="mini" round @click="dialogFormVisible = true">添加种类</el-button>
+    <el-button style="margin-bottom: 1%;" type="success" icon="el-icon-edit" size="mini" round @click="addRecord">添加种类</el-button>
     <div class="table_headr">设备种类列表</div>
     <el-table
       ref="multipleTable"
@@ -29,7 +29,7 @@
     <el-pagination
       class="fy"
       :current-page.sync="currentPage"
-      :page-size="20"
+      :page-size="pagesize"
       layout="total, prev, pager, next"
       :total="total"
       @current-change="handleCurrentChange"
@@ -47,23 +47,17 @@
         <el-form-item label="设备识别号" size="small" prop="sbxlh">
           <el-input v-model="form.sbxlh" style="width: 18.75rem;" />
         </el-form-item>
-        <el-form-item label="类型 ID" prop="id" size="small">
-          <el-input v-model="form.id" style="width: 18.75rem;" />
-        </el-form-item>
         <el-form-item label="设备图片" size="small">
-          <el-upload ref="upload" action="#" list-type="picture-card" :auto-upload="false" :limit="1">
-            <i slot="default" class="el-icon-plus" />
-            <div slot="file" slot-scope="{file}">
-              <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-              <span class="el-upload-list__item-actions">
-                <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                  <i class="el-icon-zoom-in" />
-                </span>
-                <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file, fileList)">
-                  <i class="el-icon-delete" />
-                </span>
-              </span>
-            </div>
+          <el-upload
+            multiple
+            accept="image/png,image/jpg,image/gif,image/jpeg"
+            action="#"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :http-request="uploadFile"
+          >
+            <i class="el-icon-plus" />
           </el-upload>
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="form.dialogImageUrl" alt="">
@@ -74,7 +68,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="cancelAdd()">取 消</el-button>
         <el-button type="primary" @click="add('form')">确 定</el-button>
       </div>
     </el-dialog>
@@ -86,9 +80,15 @@ import {
   addtype,
   deltype
 } from '@/api/sys'
+import {
+  getUUid,
+  commonFileDelete
+} from '@/api/addType'
+
 export default {
   data() {
     return {
+      imageMap: {},
       dialogFormVisible: false,
       total: 1000, // 默认数据总数
       pagesize: 10, // 每页的数据条数
@@ -132,7 +132,7 @@ export default {
       query: {
         access_token: localStorage.getItem('accessToken'),
         start: 0,
-        length: 200,
+        length: 10,
         queryName: ''
       }
     }
@@ -142,6 +142,49 @@ export default {
     this.handleCurrentChange()
   },
   methods: {
+    cancelAdd() {
+      this.dialogFormVisible = false
+      Object.keys(this.imageMap).forEach(key => {
+        commonFileDelete({
+          access_token: localStorage.getItem('accessToken'),
+          id: this.imageMap[key]
+        }).then(res => {
+          console.log(res)
+        })
+      })
+      this.imageMap = {}
+    },
+    addRecord() {
+      this.dialogFormVisible = true
+      // 加载唯一UUID
+      getUUid({
+        access_token: localStorage.getItem('accessToken')
+      }).then(res => {
+        this.form.id = res.data
+      })
+    },
+    uploadFile(param) {
+      const formData = new FormData()
+      formData.append('access_token', localStorage.getItem('accessToken'))
+      formData.append('busiType', 'deviceCategory')
+      formData.append('busiInType', 'deviceCategoryList')
+      formData.append('refId', this.form.id)
+      formData.append('file', param.file)
+      // 新增图片
+      const that = this
+      this.$http({
+        method: 'post',
+        url: process.env.VUE_APP_BASE_API + '/common/commonLog_upload',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function(res) {
+        if (res.status === 200) {
+          that.imageMap[param.file.uid] = res.data.data[0].id
+        }
+      })
+    },
     handleClose(done) {
       done()
     },
@@ -179,7 +222,8 @@ export default {
             message: '删除成功',
             type: 'success'
           })
-          location.reload()
+          this.currentPage = 1
+          this.getlist(0)
         }).catch(() => {
 
         })
@@ -189,8 +233,9 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           addtype(this.form).then(res => {
-            console.log(res)
             this.dialogFormVisible = false
+            this.currentPage = 1
+            this.getlist(0)
           })
         } else {
           console.log('error submit!!')
@@ -202,7 +247,14 @@ export default {
       console.log('submit!')
     },
     handleRemove(file) {
-      this.$refs.upload.clearFiles()
+      commonFileDelete({
+        access_token: localStorage.getItem('accessToken'),
+        id: this.imageMap[file.uid]
+      }).then(res => {
+        if (res.status === 200) {
+          delete this.imageMap.[file.uid]
+        }
+      })
     },
     handlePictureCardPreview(file) {
       this.form.dialogImageUrl = file.url
@@ -210,7 +262,7 @@ export default {
     },
     handleCurrentChange(val) {
       var that = this
-      that.query.start = (val - 1) * 20
+      that.query.start = (val - 1) * this.pagesize
       this.getlist(that.start)
     },
     current_change: function(currentPage) {
@@ -221,37 +273,37 @@ export default {
 </script>
 
 <style>
-	.titles {
-		width: 96%;
-		margin-left: 2%;
+  .titles {
+    width: 96%;
+    margin-left: 2%;
 
-		height: 100%;
-		margin-bottom: 1.25rem;
-		font-size: 0.875rem;
-		color: gray;
-	}
+    height: 100%;
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+    color: gray;
+  }
 
-	.el-form-item .el-form-item {
-		margin-bottom: 6px;
-	}
+  .el-form-item .el-form-item {
+    margin-bottom: 6px;
+  }
 
-	.el-form-item__label {
-		color: gray;
-		font-weight: 500;
-	}
+  .el-form-item__label {
+    color: gray;
+    font-weight: 500;
+  }
 
-	.deviderLeft {
-		margin-left: 2%;
-	}
+  .deviderLeft {
+    margin-left: 2%;
+  }
 
-	@media screen and (max-width: 1024px) {
-		.titles {
-			width: 99%;
-			margin-left: 2%;
-			margin-top: -1.5%;
-			margin-bottom: 1.25rem;
-			font-size: 0.875rem;
+  @media screen and (max-width: 1024px) {
+    .titles {
+      width: 99%;
+      margin-left: 2%;
+      margin-top: -1.5%;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
 
-		}
-	}
+    }
+  }
 </style>

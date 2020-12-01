@@ -15,19 +15,17 @@
         <el-input v-model="form.id" style="width: 18.75rem;" />
       </el-form-item>
       <el-form-item label="设备图片" size="small">
-        <el-upload ref="upload" action="#" list-type="picture-card" :auto-upload="false" :limit="1">
-          <i slot="default" class="el-icon-plus" />
-          <div slot="file" slot-scope="{file}">
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-            <span class="el-upload-list__item-actions">
-              <span class="el-upload-list__item-preview" @click="(file)">
-                <i class="el-icon-zoom-in" />
-              </span>
-              <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file, fileList)">
-                <i class="el-icon-delete" />
-              </span>
-            </span>
-          </div>
+        <el-upload
+          multiple
+          accept="image/png,image/jpg,image/gif,image/jpeg"
+          action="#"
+          list-type="picture-card"
+          :file-list="imgList"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :http-request="uploadFile"
+        >
+          <i class="el-icon-plus" />
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="form.dialogImageUrl" alt="">
@@ -47,9 +45,17 @@
 import {
   addtype
 } from '@/api/sys'
+import {
+  deviceTypeGetDetail
+} from '@/api/deviceSetUp'
+
+import request from '@/utils/request'
+
 export default {
   data() {
     return {
+      imgList: [],
+      fileList: [],
       disabled: false,
       loading: false,
       form: {},
@@ -81,10 +87,20 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.form = JSON.parse(to.query.rowData)
+      deviceTypeGetDetail({
+        id: vm.form.id,
+        'access_token': localStorage.getItem('accessToken')
+      }).then(res => {
+        const arr = res.data.imgList
+        arr.forEach(item => {
+          item.url = process.env.VUE_APP_BASE_API + item.filePath
+        })
+        vm.imgList = arr
+      })
     })
   },
   created: function() {
-
+    /*  */
   },
   methods: {
     add(formName) {
@@ -111,8 +127,43 @@ export default {
         }
       })
     },
-    handleRemove(file) {
-      this.$refs.upload.clearFiles()
+    uploadFile(param) {
+      const formData = new FormData()
+      formData.append('access_token', localStorage.getItem('accessToken'))
+      formData.append('busiType', 'deviceCategory')
+      formData.append('busiInType', 'deviceCategoryList')
+      formData.append('refId', this.form.id)
+      formData.append('file', param.file)
+      // 新增图片
+      const that = this
+      this.$http({
+        method: 'post',
+        url: process.env.VUE_APP_BASE_API + '/common/commonLog_upload',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(function(res) {
+        if (res.status === 200) {
+          const arr = that.imgList
+          const item = res.data.data[0]
+          item.url = process.env.VUE_APP_BASE_API + item.filePath
+          arr.push(item)
+          that.imgList = arr
+        }
+      })
+    },
+    handleRemove(file, fileList) {
+      request({
+        url: '/common/commonFile_delete',
+        method: 'post',
+        params: {
+          access_token: localStorage.getItem('accessToken'),
+          id: file.id
+        }
+      }).then(res => {
+        console.log(res)
+      })
     },
     handlePictureCardPreview(file) {
       this.form.dialogImageUrl = file.url
@@ -123,10 +174,10 @@ export default {
 </script>
 
 <style>
-	.overview_container {
-		width: 95%;
-		margin-left: 2%;
-		color: gray;
-		margin-top: 1%;
-	}
+  .overview_container {
+    width: 95%;
+    margin-left: 2%;
+    color: gray;
+    margin-top: 1%;
+  }
 </style>
