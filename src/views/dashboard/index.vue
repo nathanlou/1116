@@ -90,8 +90,7 @@
         style="width: 30%;background-color: white;
       border-radius: 0.6rem;cursor: pointer;
       padding: 1%;margin-bottom: 1%;margin-left: 1%;
-      box-shadow: 5px 3px 5px 0px rgba(100,94,94,0.15);"
-        @click="announ"
+      box-shadow: 5px 3px 5px 0px rgba(100,94,94,0.15);" @click="announ"
       >
         <div class="tonggao">
           <div style="font-size: 1rem;color: gray;font-weight: 700;display:flex;align-items: center;">
@@ -179,7 +178,7 @@ export default {
         path: '/data_statistics'
       })
     },
-    announ() {
+	announ() {
       this.$router.push({
         path: '/notice'
       })

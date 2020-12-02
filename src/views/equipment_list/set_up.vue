@@ -50,7 +50,7 @@
         </div>
         <div style="display: flex;width: 50%;">
           <div class="label">到期日期：</div>
-          <div style="margin-left: 0.9375rem;">{{ msg.dqrq }}</div>
+          <div style="margin-left: 0.9375rem;">{{ msg.yxrq }}</div>
         </div>
       </div>
       <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">
@@ -60,7 +60,7 @@
         </div>
         <div style="display: flex;width: 50%;">
           <div class="label">通讯时间：</div>
-          <div style="margin-left: 0.9375rem;">{{ msg.lastDateStr }}</div>
+          <div style="margin-left: 0.9375rem;">{{ msg.lastTime | dateFilter("yyyy-mm-dd hh:mm:ss") }}</div>
         </div>
       </div>
     </div>
@@ -85,7 +85,7 @@
           <div style="margin-left: 0.9375rem;">
             <el-button v-if="msg.isEnable!=1" type="success" round plain size="mini" @click="on(&quot;kj&quot;)">远程开机</el-button>
             <el-button v-if="msg.isEnable==1" type="warning" round plain size="mini" @click="on(&quot;gj&quot;)">远程关机</el-button>
-            <el-button type="danger" round plain size="mini" @click="deviceControl('tingzhi')">重启设备</el-button>
+            <el-button type="danger" round plain size="mini" @click="on(&quot;cq&quot;)">重启设备</el-button>
           </div>
         </div>
       </div>
@@ -240,13 +240,35 @@ import {
 import {
   deviceTransferSave,
   deviceOpLogListData,
-  deviceInforUpdateZb,
-  deviceInforUpdateParams
+  deviceInforUpdateZb
 } from '@/api/deviceSetUp.js'
 import {
   parseTime
 } from '@/utils/index.js'
 export default {
+  filters: {
+    dateFilter(data, format = '') {
+      var dt = new Date(data)
+      var y = dt.getFullYear()
+      var m = (dt.getMonth() + 1).toString().padStart(2, '0')
+      var d = dt.getDate().toString().padStart(2, '0')
+      var h = dt.getHours().toString().padStart(2, '0')
+      var mm = dt.getMinutes().toString().padStart(2, '0')
+      var s = dt.getSeconds().toString().padStart(2, '0')
+      if (format.toLocaleLowerCase() === 'yyyy-mm-dd' ||
+					format.toLocaleLowerCase() === '') {
+        return `${y}-${m}-${d}`
+      } else if (format.toLocaleLowerCase() === 'yyyy/mm/dd') {
+        return `${y}/${m}/${d}`
+      } else if (format.toLocaleLowerCase() === 'yyyy-mm-dd hh:mm:ss') {
+        return `${y}-${m}-${d} ${h}:${mm}:${s}`
+      } else if (format.toLocaleLowerCase() === 'yyyy/mm/dd hh:mm:ss') {
+        return `${y}/${m}/${d} ${h}:${mm}:${s}`
+      } else {
+        return `时间格式有误`
+      }
+    }
+  },
   data() {
     const self = this
     return {
@@ -511,88 +533,76 @@ export default {
           this.showMapFlg = false
         }
       })
-    },
-    // 控制设备
-    deviceControl(fun) {
-      const query = {}
-      query.access_token = localStorage.getItem('accessToken')
-      query.deviceId = this.msg.id
-      query.fun = fun
-      deviceInforUpdateParams({ query }).then(res => {
-        if (res.status === 200) {
-          this.$message.success('操作成功')
-        }
-      })
     }
   }
 }
 </script>
 
 <style>
-  .label {
-    width: 6.875rem;
-    text-align: center;
-    background-color: #E8F4FF;
+	.label {
+		width: 6.875rem;
+		text-align: center;
+		background-color: #E8F4FF;
 
-  }
+	}
 
-  .table_headr {
-    height: 2rem;
-    line-height: 2rem;
-    color: white;
-    background-color: #409EFF;
-  }
+	.table_headr {
+		height: 2rem;
+		line-height: 2rem;
+		color: white;
+		background-color: #409EFF;
+	}
 
-  .msg_con {
-    width: 80%;
-    margin-left: 10%;
-    font-size: 1.0rem;
-  }
+	.msg_con {
+		width: 80%;
+		margin-left: 10%;
+		font-size: 1.0rem;
+	}
 
-  .container_table {
-    margin-top: 1%;
-  }
+	.container_table {
+		margin-top: 1%;
+	}
 
-  .fy {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    text-align: right;
-  }
+	.fy {
+		margin-top: 1%;
+		margin-bottom: 1%;
+		text-align: right;
+	}
 
-  @media screen and (max-width: 1024px) {
-    .msg_con {
-      width: 80%;
-      margin-left: 0;
-      font-size: 0.9rem;
-    }
+	@media screen and (max-width: 1024px) {
+		.msg_con {
+			width: 80%;
+			margin-left: 0;
+			font-size: 0.9rem;
+		}
 
-  }
+	}
 
-  .search-box {
-    position: absolute;
-    top: 25px;
-    left: 70px;
-  }
+	.search-box {
+		position: absolute;
+		top: 25px;
+		left: 70px;
+	}
 
-  .amap-page-container {
-    position: relative;
-    width: 100%;
-    height: 600px;
-    box-sizing: border-box;
-  }
+	.amap-page-container {
+		position: relative;
+		width: 100%;
+		height: 600px;
+		box-sizing: border-box;
+	}
 
-  .map {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: -20px;
-    left: 0;
-  }
+	.map {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: -20px;
+		left: 0;
+	}
 
-  .toolbar {
-    width: 80%;
-    height: auto;
-    color: red;
-    margin-top: 15px;
-  }
+	.toolbar {
+		width: 80%;
+		height: auto;
+		color: red;
+		margin-top: 15px;
+	}
 </style>

@@ -174,7 +174,7 @@
         <el-row type="flex" justify="start">
           <el-form-item>
             <el-button type="primary" @click="submit()">保存</el-button>
-            <el-button @click="adddialogVisible = false">取消</el-button>
+            <el-button @click="editInfodialogVisible = false">取消</el-button>
           </el-form-item>
         </el-row>
       </el-form>
