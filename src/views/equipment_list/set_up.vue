@@ -85,7 +85,7 @@
           <div style="margin-left: 0.9375rem;">
             <el-button v-if="msg.isEnable!=1" type="success" round plain size="mini" @click="on(&quot;kj&quot;)">远程开机</el-button>
             <el-button v-if="msg.isEnable==1" type="warning" round plain size="mini" @click="on(&quot;gj&quot;)">远程关机</el-button>
-            <el-button type="danger" round plain size="mini" @click="on(&quot;cq&quot;)">重启设备</el-button>
+            <el-button type="danger" round plain size="mini" @click="deviceControl('tingzhi')">重启设备</el-button>
           </div>
         </div>
       </div>
@@ -240,7 +240,8 @@ import {
 import {
   deviceTransferSave,
   deviceOpLogListData,
-  deviceInforUpdateZb
+  deviceInforUpdateZb,
+  deviceInforUpdateParams
 } from '@/api/deviceSetUp.js'
 import {
   parseTime
@@ -508,6 +509,18 @@ export default {
         if (res.status === 200) {
           this.$message.success('设置成功')
           this.showMapFlg = false
+        }
+      })
+    },
+    // 控制设备
+    deviceControl(fun) {
+      const query = {}
+      query.access_token = localStorage.getItem('accessToken')
+      query.deviceId = this.msg.id
+      query.fun = fun
+      deviceInforUpdateParams({ query }).then(res => {
+        if (res.status === 200) {
+          this.$message.success('操作成功')
         }
       })
     }

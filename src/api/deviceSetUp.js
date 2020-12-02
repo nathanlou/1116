@@ -75,3 +75,11 @@ export function deviceInforUpdateZb(data) {
     params: data
   })
 }
+// 设备操作
+export function deviceInforUpdateParams(data) {
+  return request({
+    url: '/sbgl/deviceInfor_updateParams',
+    method: 'post',
+    params: data
+  })
+}

@@ -6,7 +6,7 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-				  <search id="header-search" class="right-menu-item" />
+        <search id="header-search" class="right-menu-item" />
         <!-- <error-log class="errLog-container right-menu-item hover-effect" /> -->
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
@@ -18,14 +18,14 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-			<img src="../../assets/401_images/401.gif" style="width: 4rem;height: 5rem;" />
+          <img src="../../assets/401_images/401.gif" style="width: 4rem;height: 5rem;">
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-			<router-link to="/">
-			  <el-dropdown-item>首页</el-dropdown-item>
-			</router-link>
+          <router-link to="/">
+            <el-dropdown-item>首页</el-dropdown-item>
+          </router-link>
           <router-link to="/profile/index">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
@@ -69,8 +69,10 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-	  
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+
+      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push({ path: '/login', replace: true })
+      location.reload()
     }
   }
 }
