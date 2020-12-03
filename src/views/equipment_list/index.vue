@@ -137,6 +137,7 @@ export default {
   },
   created: function() {
     this.query.qState = this.$route.query.status
+	setInterval(this.getlist, 30000)
     this.getlist()
     this.handleCurrentChange()
     companyListCom().then(res => {

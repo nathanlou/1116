@@ -34,3 +34,12 @@ export function updatepassword(data) {
     params: data
   })
 }
+
+// 地图页设备统计
+export function tjfx_getSbfbTop() {
+  return request({
+    url: '/tjfx/tjfx_getSbfbTop',
+    method: 'post',
+    params:{'access_token': localStorage.getItem('accessToken')}
+  })
+}

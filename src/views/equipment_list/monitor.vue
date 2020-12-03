@@ -5,18 +5,18 @@
 				<div class="centerText" style="width: 30%;">
 					<div><span>设备类型：</span><span>{{ rowData.sblx }}</span>
 						<span v-if="rowData.deviceState == 1" class="bg_online">在线</span>
-						<span class="bg_unline">离线</span>
+						<span v-else class="bg_unline">离线</span>
 					</div>
 					<div style="margin:0.9rem 0 ;"><span>所属企业：</span><span>{{ rowData.companyName ? rowData.companyName : "-" }}</span></div>
-					<div><span>当前地址：</span><span>{{ rowData.rl ? rowData.rl : "-" }}</span></div>
+					<div><span>当前地址：</span><span>{{ rowData.dqdz ? rowData.dqdz : "-" }}</span></div>
 				</div>
 				<div style="display: flex;width: 70%;overflow-x:scroll;overflow-y: hidden;" class="element">
-					<div>
+					<!-- <div> -->
 						<div v-for="(item,index) in imgList" :key="index" class="block">
 							<el-image style="width: 100px;height: 100px;margin-left: 10px;" :src="host + item.filePath" fit="contain"
 							 :preview-src-list="previewList" />
 						</div>
-					</div>
+					<!-- </div> -->
 				</div>
 			</div>
 			<div v-if="typeKey != 'modbus_xwz'" style="margin-left: 1.2rem;margin-top: 1rem;margin-right: 1rem;">
@@ -343,7 +343,6 @@
 			} else {
 				sessionStorage.setItem('monitor', JSON.stringify(rowData))
 			}
-
 			this.idKey = rowData.id
 			this.typeKey = rowData.sblxId
 			this.rowData = rowData
@@ -437,7 +436,6 @@
 							}
 						}
 						this.deviceDataList = res.data
-						console.log(this.deviceDataList)
 					} else {
 						// 小雾桩单独处理
 

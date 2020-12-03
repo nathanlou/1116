@@ -48,7 +48,7 @@
 					}
 					this.chart.setOption({
 						title: {
-							text: '全国设备分布图',
+							text: '设备国内分布图',
 							x: 'center',
 							sublink: 'http://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83#cite_note-12',
 							textStyle: {
@@ -66,7 +66,13 @@
 						},
 						tooltip: {
 							trigger: 'item',
-							formatter: '{b}{c}(台)'
+							formatter: function(params) {
+								if (params.value) {
+									return params.name + ' : ' + params.value + '台';
+								} else {
+									return params.name + ' : ' + '0' + '台';
+								}
+							}
 						},
 						toolbox: {
 							show: true,

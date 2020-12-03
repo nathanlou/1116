@@ -10,18 +10,33 @@
 				<el-button class="btn" type="primary" icon="el-icon-search" size="mini" round>搜索</el-button>
 			</div>
 			<div style="display: flex;">
-				<div v-for="(item,index) in sbzk" :key="index" class="sbzk">
-					<div>{{ item.name }}</div>
-					<div class="bigtitle">{{ item.value }}</div>
-					<div class="text"><i class="el-icon-top" style="color: red;" />{{ item.bl }}%</div>
+				<div class="sbzk">
+					<div>设备总数量</div>
+					<div class="bigtitle">{{ views.allNum }}台</div>
+					<!-- <div class="text"><i class="el-icon-top" style="color: red;" />{{ item.bl }}%</div> -->
+				</div>
+				<div class="sbzk">
+					<div>本年新增</div>
+					<div class="bigtitle">{{ views.yearAdd }}台</div>
+					<div class="text">相比去年<i class="el-icon-top" style="color: red;" />{{ views.yearAdd-views.lastYearAdd }}台</div>
+				</div>
+				<div class="sbzk">
+					<div>本月新增</div>
+					<div class="bigtitle">{{ views.monthAdd }}台</div>
+					<div class="text">相比上月<i class="el-icon-top" style="color: red;" />{{ views.monthAdd-views.lastMonthAdd }}台</div>
+				</div>
+				<div class="sbzk">
+					<div>本周新增</div>
+					<div class="bigtitle">{{ views.weekAdd }}台</div>
+					<div class="text">相比上周<i class="el-icon-top" style="color: red;" />{{ views.weekAdd-views.lastWeekAdd }}台</div>
 				</div>
 			</div>
 			<div id="map" class="mipDiv" />
 		</div>
-
-		<div style="margin-right: 2%;margin-left: -2%;">
-			<div class="block">
-				<el-date-picker v-model="value1" type="date" placeholder="选择日期" size="mini" />
+		<div style="margin-right: 2%;margin-left: -2%;margin-top: 2%;text-align: center;width: 25%;">
+			<div class="bigtitle">
+				设备地区销量排名<em style="color: red;">TOP10</em>
+				<!-- <el-date-picker v-model="value1" type="date" placeholder="选择日期" size="mini" /> -->
 			</div>
 			<el-table ref="multipleTable" :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border stripe
 			 size="mini" class="pctable" :default-sort="{prop: 'date', order: 'descending'}">
@@ -58,7 +73,8 @@
 		companyListCom
 	} from '@/api/companyManager.js'
 	import {
-		statMap
+		statMap,
+		tjfx_getSbfbTop
 	} from '@/api/globaldata'
 	export default {
 		mixins: [resize],
@@ -68,23 +84,7 @@
 				currentPage: 1,
 				companyId: '',
 				optionsEnterPN: [],
-				value1: '',
-				sbzk: [{
-						name: '设备总数',
-						value: '1556542',
-						bl: '13.6'
-					},
-					{
-						name: '本月新增',
-						value: '3203',
-						bl: '13.6'
-					},
-					{
-						name: '本周新增',
-						value: '124',
-						bl: '13.6'
-					}
-				],
+				// value1: '',
 				tableData: [],
 				chart: null,
 				company_list: [{
@@ -97,13 +97,19 @@
 					value: '选项2',
 					label: '客户体验'
 				}],
-				qhkeyword: ''
+				qhkeyword: '',
+				views:''
 			}
 		},
 		created() {
 			// 加载企业下拉框
 			companyListCom().then(res => {
 				this.optionsEnterPN = res.data
+			})
+			// 设备统计
+			tjfx_getSbfbTop().then(res => {
+				console.log(res)
+				this.views = res.data
 			})
 		},
 		mounted() {
@@ -144,7 +150,13 @@
 						},
 						tooltip: {
 							trigger: 'item',
-							formatter: '{b}{c}(台)'
+							formatter: function(params) {
+								if (params.value) {
+									return params.name + ' : ' + params.value + '台';
+								} else {
+									return params.name + ' : ' + '0' + '台';
+								}
+							}
 						},
 						toolbox: {
 							show: true,
