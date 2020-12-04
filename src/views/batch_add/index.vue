@@ -263,12 +263,12 @@ export default {
         {
           data: 'azrq',
           type: 'date',
-          dateFormat: 'YYYY/MM/DD'
+          dateFormat: 'YYYY-MM-DD'
         },
         {
           data: 'dqrq',
           type: 'date',
-          dateFormat: 'YYYY/MM/DD'
+          dateFormat: 'YYYY-MM-DD'
         },
         {
           data: 'lxr',
