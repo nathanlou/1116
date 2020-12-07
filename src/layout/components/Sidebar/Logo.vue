@@ -2,11 +2,11 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="home+logo" class="sidebar-logo">
+        <img v-show="show" v-if="logo" :src="home+logo" class="sidebar-logo">
         <h1 v-else class="sidebar-title">{{ title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img :src="home+logo" class="sidebar-logo">
+        <img v-show="show" :src="home+logo" class="sidebar-logo">
         <h1 class="sidebar-title">{{ title }} </h1>
       </router-link>
     </transition>
@@ -29,7 +29,8 @@ export default {
     return {
       home: process.env.VUE_APP_BASE_API,
       title: '',
-      logo: ''
+      logo: '',
+			show:true,
     }
   },
   created() {
@@ -43,6 +44,9 @@ export default {
       getSessionUser(query).then(res => {
         this.logo = res.data.companyLogoPath
         this.title = res.data.user.deptName
+				if(res.data.companyLogoPath == ''){
+					this.show=false
+				}
       })
     }
   }

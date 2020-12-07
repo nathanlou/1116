@@ -64,7 +64,7 @@
         </div>
       </div>
 	  <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">
-	    <div style="display: flex;width: 50%;">
+	    <div style="display: flex;width: 100%;">
 	      <div class="label">基本操作：</div>
 	      <div style="margin-left: 0.9375rem;">
 			  <el-button type="success" round plain size="mini" @click="transfer()">迁移设备</el-button>
@@ -104,8 +104,11 @@
 	<el-dialog title="迁移" :visible.sync="dialogVisible" width="55%">
 	  <div>
 	    <el-form ref="form" :model="form" label-width="80px">
+				<el-form-item label="当前企业">
+				  {{msg.companyName}}
+				</el-form-item>
 	      <el-form-item label="设备编号">
-	        <el-input v-model="msg.bh" disabled />
+			   {{msg.bh}}
 	      </el-form-item>
 	      <el-form-item label="迁移企业">
 	        <el-select v-model="qyvalue" placeholder="请选择">

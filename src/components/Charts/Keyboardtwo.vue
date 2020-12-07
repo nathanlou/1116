@@ -18,17 +18,17 @@
 				<div class="sbzk">
 					<div>本年新增</div>
 					<div class="bigtitle">{{ views.yearAdd }}台</div>
-					<div class="text">相比去年<i class="el-icon-top" style="color: red;" />{{ views.yearAdd-views.lastYearAdd }}台</div>
+					<!-- <div class="text">相比去年<i class="el-icon-top" style="color: red;" />{{ views.yearAdd-views.lastYearAdd }}台</div> -->
 				</div>
 				<div class="sbzk">
 					<div>本月新增</div>
 					<div class="bigtitle">{{ views.monthAdd }}台</div>
-					<div class="text">相比上月<i class="el-icon-top" style="color: red;" />{{ views.monthAdd-views.lastMonthAdd }}台</div>
+					<!-- <div class="text">相比上月<i class="el-icon-top" style="color: red;" />{{ views.monthAdd-views.lastMonthAdd }}台</div> -->
 				</div>
 				<div class="sbzk">
 					<div>本周新增</div>
 					<div class="bigtitle">{{ views.weekAdd }}台</div>
-					<div class="text">相比上周<i class="el-icon-top" style="color: red;" />{{ views.weekAdd-views.lastWeekAdd }}台</div>
+					<!-- <div class="text">相比上周<i class="el-icon-top" style="color: red;" />{{ views.weekAdd-views.lastWeekAdd }}台</div> -->
 				</div>
 			</div>
 			<div id="map" class="mipDiv" />

@@ -62,74 +62,6 @@ export default {
           this.y3.push(listYx[i].y3)
         }
         this.chart = echarts.init(document.getElementById(this.id))
-        // var posList = [
-        //   'left', 'right', 'top', 'bottom',
-        //   'inside',
-        //   'insideTop', 'insideLeft', 'insideRight', 'insideBottom',
-        //   'insideTopLeft', 'insideTopRight', 'insideBottomLeft', 'insideBottomRight'
-        // ]
-
-        // app.configParameters = {
-        //   rotate: {
-        //     min: -90,
-        //     max: 90
-        //   },
-        //   align: {
-        //     options: {
-        //       left: 'left',
-        //       center: 'center',
-        //       right: 'right'
-        //     }
-        //   },
-        //   verticalAlign: {
-        //     options: {
-        //       top: 'top',
-        //       middle: 'middle',
-        //       bottom: 'bottom'
-        //     }
-        //   },
-        //   position: {
-        //     options: echarts.util.reduce(posList, function(map, pos) {
-        //       map[pos] = pos
-        //       return map
-        //     }, {})
-        //   },
-        //   distance: {
-        //     min: 0,
-        //     max: 100
-        //   }
-        // }
-
-        // app.config = {
-        //   rotate: 0,
-        //   align: 'left',
-        //   verticalAlign: 'middle',
-        //   position: 'insideBottom',
-        //   distance: 10,
-        //   onChange: function() {
-        //     var labelOption = {
-        //       normal: {
-        //         rotate: app.config.rotate,
-        //         align: app.config.align,
-        //         verticalAlign: app.config.verticalAlign,
-        //         position: app.config.position,
-        //         distance: app.config.distance
-        //       }
-        //     }
-        //     myChart.setOption({
-        //       series: [{
-        //         label: labelOption
-        //       }, {
-        //         label: labelOption
-        //       }, {
-        //         label: labelOption
-        //       }, {
-        //         label: labelOption
-        //       }]
-        //     })
-        //   }
-        // }
-
         var labelOption = {
           show: true,
           position: 'top',
@@ -193,15 +125,46 @@ export default {
             }
 
           }],
-          yAxis: [{
-            type: 'value',
-            axisLine: {
-              lineStyle: { // 图例文字的样式
-                color: 'gray',
-                fontSize: 20
-              }
-            }
-          }],
+          yAxis: [
+			  {
+			                  type: 'value',
+			                  nameLocation:"center",
+			                  nameGap:35,
+			                  nameRotate:0,
+			                  nameTextStyle:{
+			                      fontSize: 16,
+			                  },
+			                  //默认以千分位显示，不想用的可以在这加一段
+			                  axisLabel : {   //调整左侧Y轴刻度， 直接按对应数据显示
+			                      show:true,
+			                      showMinLabel:true,
+			                      showMaxLabel:true,
+			                      formatter: function (value) {
+			                          return value;
+			                      }
+			                  }
+			              },
+			              {
+			                  type: 'value',
+			                  nameLocation:"center",
+			                  nameGap:35,
+			                  nameRotate:0,
+							  yAxisIndex: 1,
+							  max:20,
+			                  nameTextStyle:{
+			                      fontSize: 16,
+			                  },
+			                  //默认以千分位显示，不想用的可以在这加一段
+			                  axisLabel : {   //调整左侧Y轴刻度， 直接按对应数据显示
+			                      show:true,
+			                      showMinLabel:true,
+			                      showMaxLabel:true,
+			                      formatter: function (value) {
+			                          return value;
+			                      }
+			                  }
+			              }
+		  ],
           series: [{
             name: '运行时间',
             type: 'bar',
@@ -217,8 +180,10 @@ export default {
           {
             name: '报警情况',
             type: 'line',
+			yAxisIndex: 1,
             // label: labelOption,
-            data: this.y3
+            data: this.y3,
+			 max: 20,
           }
           ]
         })
