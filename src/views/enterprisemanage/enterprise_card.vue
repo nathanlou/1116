@@ -10,15 +10,6 @@
         <el-select v-model="pcsearchenterPriseInfo.type" placeholder="请选择" style="width: 10%;">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
-        <span class="searchText" style="margin-left: 1.25rem;margin-right: 5px;">创建时间：</span>
-        <el-date-picker
-          v-model="pcsearchenterPriseInfo.time"
-          style="width: 20%;"
-          type="datetimerange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="['12:00:00']"
-        />
         <span class="searchText" style="margin-left: 1.25rem;margin-right: 5px;">按设备数排序：</span>
         <el-select v-model="pcsearchenterPriseInfo.queryOrder" placeholder="请选择" style="width: 100px;">
           <el-option v-for="item in optionsN" :key="item.value" :label="item.label" :value="item.value" />
@@ -84,17 +75,6 @@
           <el-select v-model="minisearchenterPriseInfo.type" placeholder="请选择" style="width: 48%;">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-        </div>
-        <div style="margin: 0.625rem;">
-          <span class="searchText" style="">创建时间：</span>
-          <el-date-picker
-            v-model="minisearchenterPriseInfo.time"
-            style="width: 48%;"
-            type="datetimerange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['12:00:00']"
-          />
         </div>
         <div style="margin: 0.625rem;">
           <span style="">是否启用：</span>
@@ -189,22 +169,25 @@ export default {
       showForm: false,
       companys: [],
       options: [{
-        value: '正式企业1',
+        value: '',
+        label: '全部'
+      }, {
+        value: '0',
         label: '正式企业'
       }, {
-        value: '试用企业2',
+        value: '1',
         label: '试用企业'
       }],
       optionsIS: [{
-        value: '是',
+        value: '1',
         label: '是'
       }, {
-        value: '否',
+        value: '0',
         label: '否'
       }],
       optionsN: [{
         value: 'asc',
-        label: '顺序'
+        label: '正序'
       }, {
         value: 'desc',
         label: '倒序'
@@ -235,7 +218,6 @@ export default {
         contactPerper: '',
         phone: '',
         isUser: '',
-        time: '',
         queryOrder: ''// 顺序
       },
       minisearchenterPriseInfo: {
@@ -306,17 +288,17 @@ export default {
       } else {
         /* 表示平板端,弹窗显示*/
         this.searchdialogVisible = true
-        console.log(this.minisearchenterPriseInfo)
       }
       const query = {
         access_token: localStorage.getItem('accessToken'),
         start: this.currentPage - 1,
         length: this.pageSize,
         queryName: this.pcsearchenterPriseInfo.name,
-        queryOrder: this.pcsearchenterPriseInfo.queryOrder
+        queryOrder: this.pcsearchenterPriseInfo.queryOrder,
+		queryIsTest:this.pcsearchenterPriseInfo.type,
+		queryIsEnable:this.pcsearchenterPriseInfo.isUser
       }
       company_list(query).then(res => {
-        console.log(res)
         this.companys = res.data
         this.total = res.recordsTotal
       })

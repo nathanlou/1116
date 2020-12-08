@@ -60,9 +60,8 @@
 			</el-table>
 
 		</div>
-
 	</div>
-
+	</div>
 </template>
 
 <script>
@@ -98,7 +97,7 @@
 					label: '客户体验'
 				}],
 				qhkeyword: '',
-				views:''
+				views: ''
 			}
 		},
 		created() {
@@ -152,9 +151,9 @@
 							trigger: 'item',
 							formatter: function(params) {
 								if (params.value) {
-									return params.name + ' : ' + params.value + '台';
+									return params.name + ' : ' + params.value + '台'
 								} else {
-									return params.name + ' : ' + '0' + '台';
+									return params.name + ' : ' + '0' + '台'
 								}
 							}
 						},
