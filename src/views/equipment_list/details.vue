@@ -1,6 +1,6 @@
 <template>
   <div style="width: 95%;margin-left: 2.5%;margin-top: 2%;color: gray;">
-
+<el-page-header style="margin-left: 2.5%;" content="详情页面" @back="goback" />
     <div class="msg_con">
       <div style="display: flex;width: 100%;height: 1.5rem;font-weight: 700;justify-content: center;">设备信息</div>
       <div style="display: flex;height: 2.8rem;line-height: 2.8rem;border: 0.04rem solid #f4f4f4;">

@@ -22,7 +22,7 @@
 			</span>
 			<div style="clear: both;" />
 		</div>
-
+		<!-- <hot-table :licenseKey="licenseKey" id="example" class="noScroll-y col-xs-12"></hot-table> -->
 		<div id="example" class="noScroll-y col-xs-12" />
 		<div style="color: red;margin-top: 1%;margin-bottom: 1%;">
 			注意：带*号为必填项,相同项可以通过复制，或者下拉边框进行填充。
@@ -36,7 +36,6 @@
 <script>
 	import 'handsontable-pro/dist/handsontable.full.css'
 	import Handsontable from 'handsontable-pro'
-
 	import {
 		companyListCom
 	} from '@/api/companyManager.js'
@@ -239,6 +238,7 @@
 					manualColumnMove: true,
 					manualColumnFreeze: true,
 					correctFormat: true,
+					licenseKey: "9624c-d3fa4-128b4-8eb11-a353f",
 					colWidths: 100,
 					rowHeights: 30,
 					stretchH: 'all',
@@ -527,7 +527,6 @@
 		}
 	}
 </script>
-
 <style scoped="scopeds">
 	.select {
 		width: 8rem;
@@ -537,7 +536,14 @@
 	.btns {
 		margin-bottom: 2%;
 	}
-
+	#hot-display-license-info{
+		font-size: 10px;
+		color: #323232;
+		padding: 5px 0 3px 0;
+		font-family: Helvetica, Arial, sans-serif;
+		text-align: left;
+		display: none !important;
+	}
 	@media screen and (max-width: 1024px) {
 		.container {
 			margin-top: -1.5% !important;

@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<el-page-header style="margin-left: 2.5%;margin-bottom: 2%;" content="监控页面" @back="goback" />
 		<div class="topcardbg_baseinfo">
 			<div style="display: flex;overflow-x: hidden;">
 				<div class="centerText" style="width: 30%;">
@@ -544,6 +545,9 @@
 			//
 			handleClick() {
 
+			},
+			goback(){
+				this.$router.go(-1)
 			}
 		}
 	}
