@@ -186,7 +186,21 @@ const actions = {
       resolve()
     })
   },
-
+  //清除状态
+clearToken({
+    commit
+  }) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', '')
+      commit('SET_ROLES', [])
+      removeToken()
+      sessionStorage.removeItem('role');
+      localStorage.removeItem('accessToken');
+      sessionStorage.removeItem('hasRouter');
+      sessionStorage.removeItem('tokenInvalidateTime');
+      resolve()
+    })
+  },
   // dynamically modify permissions
   async changeRoles({
     commit,

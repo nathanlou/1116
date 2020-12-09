@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '@/router'
 import {
   MessageBox,
   Message
@@ -102,7 +103,23 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
+      if(res.status === 409){
+        try {
+          //先清理
+          clearTimeout(ref);
+        } catch (e) {
+          //TODO handle the exception
+          console.log("清理定时任务失败", refreshToken)
+        }
+        store.dispatch('user/clearToken').then(() => {
+          router.replace({
+            path: '/login'
+          })
+        })
+        return false;
+      }
     }
+
     let tokenInvalidateTime = sessionStorage.getItem('tokenInvalidateTime');
     if(!refreshTokenFlg && response.config.url && response.config.url.indexOf('/oauth/token') == -1  && tokenInvalidateTime && new Date(tokenInvalidateTime).getTime() <= new Date().getTime() + 60000){
       refreshTokenFlg = true;
