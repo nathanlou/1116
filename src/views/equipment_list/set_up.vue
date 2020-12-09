@@ -68,9 +68,9 @@
 					<div style="display: flex;width: 100%;">
 						<div class="label">远程操作：</div>
 						<div style="margin-left: 0.9375rem;">
-							<el-button v-if="msg.isEnable!=1" type="success" round plain size="mini" @click="on(&quot;kj&quot;)">远程开机</el-button>
-							<el-button v-if="msg.isEnable==1" type="warning" round plain size="mini" @click="on(&quot;gj&quot;)">远程关机</el-button>
-							<el-button type="danger" round plain size="mini" @click="on(&quot;cq&quot;)">重启设备</el-button>
+							<el-button :disabled='testbtn' v-if="msg.isEnable!=1" type="success" round plain size="mini" @click="on(&quot;kj&quot;)">远程开机</el-button>
+							<el-button :disabled='testbtn' v-if="msg.isEnable==1" type="warning" round plain size="mini" @click="on(&quot;gj&quot;)">远程关机</el-button>
+							<el-button :disabled='testbtn' type="danger" round plain size="mini" @click="on(&quot;cq&quot;)">重启设备</el-button>
 						</div>
 					</div>
 				</div>
@@ -78,8 +78,8 @@
 					<div style="display: flex;width: 100%;">
 						<div class="label">特殊设置：</div>
 						<div style="margin-left: 0.9375rem;">
-							<el-button type="success" round plain size="mini" @click="xtjg = true">心跳间隔</el-button>
-							<el-button type="warning" round plain size="mini" @click="ipdz = true">IP地址</el-button>
+							<el-button :disabled='testbtn' type="success" round plain size="mini" @click="xtjg = true">心跳间隔</el-button>
+							<el-button :disabled='testbtn' type="warning" round plain size="mini" @click="ipdz = true">IP地址</el-button>
 						</div>
 					</div>
 				</div>
@@ -190,6 +190,7 @@
 		data() {
 			const self = this
 			return {
+				testbtn:false,
 				ipdz: false,
 				xtjg: false,
 				tx: false,
@@ -241,6 +242,11 @@
 				}
 				equipment_msg(query).then(res => {
 					this.msg = res.data
+					if(this.msg.deviceState==1){
+						this.testbtn = false
+					}else{
+						this.testbtn = true
+					}
 				})
 			},
 			on(res) {
@@ -256,7 +262,6 @@
 			ipclick() {
 				this.ipdz = false
 			},
-			// 显示地图
 			goback() {
 				this.$router.go(-1)
 			},
